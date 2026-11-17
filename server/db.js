@@ -50,6 +50,27 @@ CREATE TABLE IF NOT EXISTS updates (
   link TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
+CREATE TABLE IF NOT EXISTS submissions (
+  id TEXT PRIMARY KEY,
+  upload_token TEXT NOT NULL,
+  contributor TEXT,
+  message TEXT,
+  visibility TEXT NOT NULL CHECK(visibility IN ('public','family')),
+  status TEXT NOT NULL DEFAULT 'uploading' CHECK(status IN ('uploading','pending','approved','rejected')),
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  moderated_by INTEGER,
+  moderated_at TEXT
+);
+CREATE TABLE IF NOT EXISTS submission_files (
+  id TEXT PRIMARY KEY,
+  submission_id TEXT NOT NULL REFERENCES submissions(id),
+  storage_key TEXT NOT NULL,
+  original_name TEXT NOT NULL,
+  content_type TEXT NOT NULL,
+  size INTEGER
+);
+CREATE INDEX IF NOT EXISTS idx_submissions_status ON submissions(status, visibility);
+CREATE INDEX IF NOT EXISTS idx_files_submission ON submission_files(submission_id);
 `)
 
 // ——— One-time seed from the repo's content files ———

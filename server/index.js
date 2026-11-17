@@ -6,6 +6,9 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { getSiteContent, listUpdates } from './db.js'
 import adminRouter from './admin.js'
+import submissionsRouter, { publicGallery } from './submissions.js'
+import { storageMode, localVerify, localWriteStream, localReadStream } from './storage.js'
+import { db } from './db.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.join(__dirname, '..')
@@ -49,6 +52,39 @@ app.get('/api/content', (req, res) => {
 })
 
 app.use('/api/admin', adminRouter)
+app.use('/api/submissions', submissionsRouter)
+app.get('/api/gallery', publicGallery)
+
+// Local-disk media endpoints — used only in development (no R2 credentials).
+if (storageMode === 'local') {
+  console.log('Storage: LOCAL DISK (development). Set R2_* env vars for Cloudflare R2.')
+  app.put('/api/local-media/:key', (req, res) => {
+    const key = decodeURIComponent(req.params.key)
+    const { expires, sig } = req.query
+    if (!sig || !localVerify('put', key, expires, String(sig))) {
+      return res.status(403).json({ error: 'forbidden' })
+    }
+    const out = localWriteStream(key)
+    req.pipe(out)
+    out.on('finish', () => res.json({ ok: true }))
+    out.on('error', () => res.status(500).json({ error: 'write_failed' }))
+  })
+  app.get('/api/local-media/:key', (req, res) => {
+    const key = decodeURIComponent(req.params.key)
+    const { expires, sig, dl } = req.query
+    if (!sig || !localVerify('get', key, expires, String(sig))) {
+      return res.status(403).json({ error: 'forbidden' })
+    }
+    const row = db.prepare(`SELECT content_type FROM submission_files WHERE storage_key = ?`).get(key)
+    if (row) res.setHeader('Content-Type', row.content_type)
+    if (dl) res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(String(dl))}`)
+    const stream = localReadStream(key)
+    stream.on('error', () => res.status(404).end())
+    stream.pipe(res)
+  })
+} else {
+  console.log('Storage: Cloudflare R2, bucket', process.env.R2_BUCKET || 'jacques-memorial-media')
+}
 
 // Static frontend (built by `npm run build`)
 if (existsSync(DIST)) {

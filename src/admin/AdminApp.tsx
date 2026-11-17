@@ -8,6 +8,7 @@ import Dashboard from './Dashboard'
 import ContentEditor from './ContentEditor'
 import Announcements from './Announcements'
 import Admins from './Admins'
+import Submissions from './Submissions'
 
 export type AdminState = {
   setupNeeded: boolean
@@ -67,6 +68,7 @@ export default function AdminApp() {
       <Route index element={<Dashboard state={state} onChange={refresh} />} />
       <Route path="content" element={<ContentEditor />} />
       <Route path="updates" element={<Announcements />} />
+      <Route path="submissions" element={<Submissions />} />
       <Route path="admins" element={state.role === 'owner' ? <Admins /> : <Navigate to="/admin" replace />} />
       <Route path="*" element={<Navigate to="/admin" replace />} />
     </Routes>

@@ -12,6 +12,9 @@
     "start": "node server/index.js"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.654.0",
+    "@aws-sdk/s3-request-presigner": "^3.654.0",
+    "archiver": "^7.0.1",
     "bcryptjs": "^2.4.3",
     "better-sqlite3": "^11.3.0",
     "compression": "^1.7.4",

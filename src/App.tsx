@@ -4,6 +4,8 @@ import Home from './pages/Home'
 import Ceremony from './pages/Ceremony'
 import Flowers from './pages/Flowers'
 import ComingSoon from './pages/ComingSoon'
+import Photos from './pages/Photos'
+import Memories from './pages/Memories'
 import Updates from './pages/Updates'
 import AdminApp from './admin/AdminApp'
 import { ui } from './ui'
@@ -24,8 +26,8 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/ceremony" element={<Ceremony />} />
         <Route path="/flowers" element={<Flowers />} />
-        <Route path="/photos" element={<ComingSoon title={ui.photosTitle} />} />
-        <Route path="/memories" element={<ComingSoon title={ui.memoriesTitle} />} />
+        <Route path="/photos" element={<Photos />} />
+        <Route path="/memories" element={<Memories />} />
         <Route path="/eulogy" element={<ComingSoon title={ui.eulogyTitle} />} />
         <Route path="/updates" element={<Updates />} />
         <Route path="/admin/*" element={<AdminApp />} />

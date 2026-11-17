@@ -1,6 +1,11 @@
 import { Router } from 'express'
 import crypto from 'crypto'
+import archiver from 'archiver'
+import path from 'path'
+import { tmpdir } from 'os'
 import { db } from './db.js'
+import { createDownloadUrl, deleteObject, objectStream } from './storage.js'
+import { ALLOWED_TYPES } from './submissions.js'
 import {
   COOKIE_NAME,
   adminFromRequest,
@@ -210,6 +215,125 @@ router.post('/invites', requireOwner, (req, res) => {
 router.delete('/invites/:code', requireOwner, (req, res) => {
   db.prepare(`DELETE FROM invites WHERE code = ? AND used_at IS NULL`).run(req.params.code)
   res.json({ ok: true })
+})
+
+// ——— Submission moderation (any active admin) ———
+
+function submissionRows(status, visibility) {
+  let sql = `SELECT s.*, a.name AS moderator FROM submissions s
+             LEFT JOIN admins a ON a.id = s.moderated_by
+             WHERE s.status != 'uploading'`
+  const args = []
+  if (status) {
+    sql += ` AND s.status = ?`
+    args.push(status)
+  }
+  if (visibility) {
+    sql += ` AND s.visibility = ?`
+    args.push(visibility)
+  }
+  sql += ` ORDER BY s.created_at DESC LIMIT 500`
+  return db.prepare(sql).all(...args)
+}
+
+router.get('/submissions', requireAdmin, async (req, res) => {
+  const { status, visibility } = req.query
+  const origin = `${req.protocol}://${req.get('host')}`
+  const fileStmt = db.prepare(`SELECT * FROM submission_files WHERE submission_id = ?`)
+  const out = []
+  for (const s of submissionRows(status, visibility)) {
+    const files = []
+    for (const f of fileStmt.all(s.id)) {
+      files.push({
+        id: f.id,
+        originalName: f.original_name,
+        contentType: f.content_type,
+        kind: ALLOWED_TYPES[f.content_type]?.kind || 'image',
+        size: f.size,
+        viewUrl: await createDownloadUrl(f.storage_key, { contentType: f.content_type, origin }),
+        downloadUrl: await createDownloadUrl(f.storage_key, {
+          contentType: f.content_type,
+          filename: f.original_name,
+          origin,
+        }),
+      })
+    }
+    out.push({
+      id: s.id,
+      contributor: s.contributor || undefined,
+      message: s.message || undefined,
+      visibility: s.visibility,
+      status: s.status,
+      createdAt: s.created_at,
+      moderator: s.moderator || undefined,
+      files,
+    })
+  }
+  res.json(out)
+})
+
+router.post('/submissions/:id/status', requireAdmin, (req, res) => {
+  const { status } = req.body || {}
+  if (status !== 'approved' && status !== 'rejected' && status !== 'pending') {
+    return res.status(400).json({ error: 'bad_status' })
+  }
+  const info = db
+    .prepare(
+      `UPDATE submissions SET status = ?, moderated_by = ?, moderated_at = datetime('now')
+       WHERE id = ? AND status != 'uploading'`,
+    )
+    .run(status, req.admin.id, req.params.id)
+  if (info.changes === 0) return res.status(404).json({ error: 'not_found' })
+  res.json({ ok: true })
+})
+
+router.delete('/submissions/:id', requireAdmin, async (req, res) => {
+  const sub = db.prepare(`SELECT id FROM submissions WHERE id = ?`).get(req.params.id)
+  if (!sub) return res.status(404).json({ error: 'not_found' })
+  const files = db.prepare(`SELECT storage_key FROM submission_files WHERE submission_id = ?`).all(sub.id)
+  for (const f of files) await deleteObject(f.storage_key)
+  db.prepare(`DELETE FROM submission_files WHERE submission_id = ?`).run(sub.id)
+  db.prepare(`DELETE FROM submissions WHERE id = ?`).run(sub.id)
+  res.json({ ok: true })
+})
+
+// Batch download of ORIGINAL files as a ZIP archive (streams; no size limit on our side).
+router.get('/submissions/zip', requireAdmin, async (req, res) => {
+  const { status, visibility } = req.query
+  const subs = submissionRows(status, visibility)
+  const fileStmt = db.prepare(`SELECT * FROM submission_files WHERE submission_id = ?`)
+  res.setHeader('Content-Type', 'application/zip')
+  const stamp = new Date().toISOString().slice(0, 10)
+  res.setHeader('Content-Disposition', `attachment; filename="memorial-${status || 'all'}-${stamp}.zip"`)
+  const archive = archiver('zip', { zlib: { level: 0 } }) // media is already compressed
+  archive.on('error', (err) => {
+    console.error('zip failed:', err.message)
+    res.destroy()
+  })
+  archive.pipe(res)
+  for (const s of subs) {
+    const prefix = `${s.created_at.slice(0, 10)}_${(s.contributor || 'anonymous').replace(/[^\p{L}\p{N} _-]/gu, '')}_${s.id.slice(0, 8)}`
+    const files = fileStmt.all(s.id)
+    if (s.message) archive.append(`${s.contributor || 'Anonymous'}\n${s.created_at}\n\n${s.message}\n`, {
+      name: `${prefix}/message.txt`,
+    })
+    for (const f of files) {
+      archive.append(await objectStream(f.storage_key), { name: `${prefix}/${f.original_name}` })
+    }
+  }
+  archive.finalize()
+})
+
+// One-click backup of the whole database (owner only) — keeps metadata recoverable.
+router.get('/backup', requireOwner, async (req, res) => {
+  const file = path.join(tmpdir(), `memorial-backup-${Date.now()}.db`)
+  try {
+    await db.backup(file)
+    res.download(file, `memorial-backup-${new Date().toISOString().slice(0, 10)}.db`)
+  } catch (err) {
+    console.error('backup failed:', err.message)
+    res.status(500).json({ error: 'backup_failed' })
+  }
 })
 
 // Invited family member creates their own account (invite code is the authorization).
