@@ -20,12 +20,21 @@ function Carousel({ photos }: { photos: BioPhoto[] }) {
     const el = ref.current
     if (!el || photos.length < 2) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const stop = () => {
+    // A horizontal scroll we didn't start = the visitor took over; vertical
+    // page scrolling over the photos must NOT stop the slideshow.
+    let autoScrolling = false
+    let settle: ReturnType<typeof setTimeout> | undefined
+    const onScroll = () => {
+      if (autoScrolling) {
+        clearTimeout(settle)
+        settle = setTimeout(() => {
+          autoScrolling = false
+        }, 400)
+        return
+      }
       stopped.current = true
     }
-    el.addEventListener('pointerdown', stop)
-    el.addEventListener('wheel', stop, { passive: true })
-    el.addEventListener('touchstart', stop, { passive: true })
+    el.addEventListener('scroll', onScroll, { passive: true })
     let visible = false
     const io = new IntersectionObserver((entries) => {
       visible = entries[0].isIntersecting
@@ -34,6 +43,11 @@ function Carousel({ photos }: { photos: BioPhoto[] }) {
     const timer = setInterval(() => {
       if (stopped.current || !visible || document.hidden) return
       const maxLeft = el.scrollWidth - el.clientWidth
+      autoScrolling = true
+      clearTimeout(settle)
+      settle = setTimeout(() => {
+        autoScrolling = false
+      }, 1600)
       if (el.scrollLeft >= maxLeft - 8) {
         el.scrollTo({ left: 0, behavior: 'smooth' })
         return
@@ -45,10 +59,9 @@ function Carousel({ photos }: { photos: BioPhoto[] }) {
     }, 4500)
     return () => {
       clearInterval(timer)
+      clearTimeout(settle)
       io.disconnect()
-      el.removeEventListener('pointerdown', stop)
-      el.removeEventListener('wheel', stop)
-      el.removeEventListener('touchstart', stop)
+      el.removeEventListener('scroll', onScroll)
     }
   }, [photos.length])
 
