@@ -69,8 +69,10 @@ Per revised requirements, individual administrator accounts (not a shared passwo
 
 ## Life & Legacy + memorial QR (17 Nov 2026)
 
-- `/life` — trilingual biography (gem tile on the homepage): early life, journey to Thailand, jewellery career, achievements, legacy; photographs (stored under `biography/` in R2, streamed with caching); curated external articles with title/description/link. All editable in Admin → Life & Legacy, live without redeploys. Placeholder text until Tara & Taylor supply verified content
-- Memorial QR: `/qr.png` (2000px) and `/qr.svg` link to jacquesprades.com (decoding verified programmatically, locally and from the live URL); `/qr-card.html` — printable A6 card in the site identity (seal, cursive name, white QR panel, trilingual invitation). Physical phone-scan test by the family recommended
+- `/life` — trilingual biography (gem tile on the homepage): early life, journey to Thailand, jewellery career, achievements, legacy; photographs (stored under `biography/` in R2, streamed with caching); curated external articles with title/description/link. All editable in Admin → Life & Legacy, live without redeploys
+- **Real biography published (17 Nov 2026)**: Tara's English text verbatim in six sections (Auvergne/Paris early years, years of adventure, Thailand, Gamma Creations, family, his story), with French and Thai translations by Claude (Tara to review; the site avoids the word "died" — EN "passed away", FR "s'est éteint", TH "จากไป"; Tara in Thai is ทาร่า)
+- **Section photographs placed (17 Nov 2026)**: 15 family photographs evaluated, restored and placed into per-section carousels — Early years (2: the 1937 baby photo with the handwritten overlay removed, a straightened/cropped street photo), Adventure (4: motorcycles, Land Rover, trekking, with Robert), Thailand (3: at home, with Khun Chotip — straightened/cropped, Jewelry Designer Club 1998), Gamma (4: desk with orchids, drafting table, booth 1995, French press spread), Family (2). Originals untouched; web copies resized to 1600px. Carousels auto-advance every 4.5s, stop on touch/scroll, respect reduced-motion
+- Memorial QR: `/qr.png` (4096px, decode-verified) and `/qr.svg` link to jacquesprades.com; `/qr-card.html` — printable A6 card in the site identity (seal, cursive name, white QR panel, trilingual invitation); `/qr-card-large.png` — 2480×3496 print-ready card image (A6@600dpi / A4@300dpi). Physical phone-scan test by the family recommended
 
 ## Outstanding / waiting on family
 
