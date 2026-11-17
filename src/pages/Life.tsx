@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import PageShell from '../components/PageShell'
 import { pick, useLang } from '../i18n'
 import type { L10n } from '../i18n'
@@ -8,6 +8,58 @@ export type BioSection = { id: string; title: Partial<L10n>; body: Partial<L10n>
 export type BioPhoto = { key: string; caption?: Partial<L10n> | null }
 export type BioArticle = { id: string; title: string; description: Partial<L10n>; url: string }
 export type Biography = { sections: BioSection[]; photos: BioPhoto[]; articles: BioArticle[] }
+
+// Horizontal photo strip that gently advances on its own until the visitor
+// touches or scrolls it (then it stays under their control).
+function Carousel({ photos }: { photos: BioPhoto[] }) {
+  const { lang } = useLang()
+  const ref = useRef<HTMLDivElement>(null)
+  const stopped = useRef(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el || photos.length < 2) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const stop = () => {
+      stopped.current = true
+    }
+    el.addEventListener('pointerdown', stop)
+    el.addEventListener('wheel', stop, { passive: true })
+    el.addEventListener('touchstart', stop, { passive: true })
+    let visible = false
+    const io = new IntersectionObserver((entries) => {
+      visible = entries[0].isIntersecting
+    }, { threshold: 0.4 })
+    io.observe(el)
+    const timer = setInterval(() => {
+      if (stopped.current || !visible || document.hidden) return
+      const first = el.firstElementChild as HTMLElement | null
+      if (!first) return
+      const gap = parseFloat(getComputedStyle(el).columnGap || '12') || 12
+      const maxLeft = el.scrollWidth - el.clientWidth
+      const next = el.scrollLeft >= maxLeft - 8 ? 0 : el.scrollLeft + first.offsetWidth + gap
+      el.scrollTo({ left: next, behavior: 'smooth' })
+    }, 4500)
+    return () => {
+      clearInterval(timer)
+      io.disconnect()
+      el.removeEventListener('pointerdown', stop)
+      el.removeEventListener('wheel', stop)
+      el.removeEventListener('touchstart', stop)
+    }
+  }, [photos.length])
+
+  return (
+    <div className="carousel" ref={ref}>
+      {photos.map((p) => (
+        <figure className="carousel-item" key={p.key}>
+          <img src={`/api/biography/photo?key=${encodeURIComponent(p.key)}`} alt="" loading="lazy" />
+          {p.caption && <figcaption>{pick(p.caption, lang)}</figcaption>}
+        </figure>
+      ))}
+    </div>
+  )
+}
 
 export default function Life() {
   const { lang } = useLang()
@@ -39,16 +91,7 @@ export default function Life() {
 
       {bio?.sections.map((s) => (
         <section className="bio-section" key={s.id}>
-          {s.photos && s.photos.length > 0 && (
-            <div className="carousel">
-              {s.photos.map((p) => (
-                <figure className="carousel-item" key={p.key}>
-                  <img src={`/api/biography/photo?key=${encodeURIComponent(p.key)}`} alt="" loading="lazy" />
-                  {p.caption && <figcaption>{pick(p.caption, lang)}</figcaption>}
-                </figure>
-              ))}
-            </div>
-          )}
+          {s.photos && s.photos.length > 0 && <Carousel photos={s.photos} />}
           <h2 className="bio-heading">{pick(s.title, lang)}</h2>
           <p className="bio-body">{pick(s.body, lang)}</p>
         </section>
