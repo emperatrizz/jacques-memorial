@@ -3,8 +3,8 @@ import type { Lang } from '../i18n'
 
 const LABELS: { code: Lang; label: string }[] = [
   { code: 'th', label: 'ไทย' },
-  { code: 'en', label: 'EN' },
-  { code: 'fr', label: 'FR' },
+  { code: 'en', label: 'English' },
+  { code: 'fr', label: 'Français' },
 ]
 
 export default function LangSwitcher() {

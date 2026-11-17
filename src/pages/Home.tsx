@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import LangSwitcher from '../components/LangSwitcher'
 import UpdatesBar from '../components/UpdatesBar'
+import Footer from '../components/Footer'
 import { CandleIcon, WreathIcon, CameraIcon, QuillIcon, BookIcon, Ornament } from '../components/icons'
 import { pick, useLang } from '../i18n'
 import { ui } from '../ui'
@@ -24,9 +25,9 @@ export default function Home() {
 
   return (
     <div className="app">
-      <header className="home-header">
+      <div className="lang-bar">
         <LangSwitcher />
-      </header>
+      </div>
 
       <div className="cover">
         {coverMissing ? (
@@ -69,7 +70,7 @@ export default function Home() {
         ))}
       </nav>
 
-      <footer className="footer">{pick(ui.footer, lang)}</footer>
+      <Footer />
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import LangSwitcher from './LangSwitcher'
+import Footer from './Footer'
 import { pick, useLang } from '../i18n'
 import type { L10n } from '../i18n'
 import { ui } from '../ui'
@@ -15,6 +16,9 @@ export default function PageShell({
   const { lang } = useLang()
   return (
     <div className="app">
+      <div className="lang-bar">
+        <LangSwitcher />
+      </div>
       <header className="page-header">
         <Link to="/" className="back-link" aria-label={pick(ui.back, lang)}>
           <svg width="10" height="16" viewBox="0 0 10 16" fill="none" aria-hidden="true">
@@ -22,13 +26,12 @@ export default function PageShell({
           </svg>
           <span>{pick(ui.home, lang)}</span>
         </Link>
-        <LangSwitcher />
       </header>
       <main>
         <h1 className="page-title">{pick(title, lang)}</h1>
         {children}
       </main>
-      <footer className="footer">{pick(ui.footer, lang)}</footer>
+      <Footer />
     </div>
   )
 }
