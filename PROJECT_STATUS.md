@@ -67,6 +67,11 @@ Per revised requirements, individual administrator accounts (not a shared passwo
 - Also shipped: Open Graph/Twitter sharing preview (1200×630 photo at https://jacquesprades.com/og.jpg, absolute URLs, verified in live page metadata) for WhatsApp/LINE/Facebook
 - Tested: 11 API checks (privacy, control takeover, unauthorized attempts, bounds) + 7-scenario simulated multi-guest WebSocket suite (3 guests, late join, reconnection, rehearsal isolation, end-of-reading) + UI pass at phone and iPad viewports + production WS smoke test. **Not tested on physical iPads/phones — a real-device rehearsal is recommended before the ceremony**
 
+## Life & Legacy + memorial QR (17 Nov 2026)
+
+- `/life` — trilingual biography (gem tile on the homepage): early life, journey to Thailand, jewellery career, achievements, legacy; photographs (stored under `biography/` in R2, streamed with caching); curated external articles with title/description/link. All editable in Admin → Life & Legacy, live without redeploys. Placeholder text until Tara & Taylor supply verified content
+- Memorial QR: `/qr.png` (2000px) and `/qr.svg` link to jacquesprades.com (decoding verified programmatically, locally and from the live URL); `/qr-card.html` — printable A6 card in the site identity (seal, cursive name, white QR panel, trilingual invitation). Physical phone-scan test by the family recommended
+
 ## Outstanding / waiting on family
 
 - Tara: complete the one-time owner setup at `/admin` (setup code was sent privately)
