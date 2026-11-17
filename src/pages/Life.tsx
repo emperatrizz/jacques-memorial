@@ -37,15 +37,16 @@ function Carousel({ photos }: { photos: BioPhoto[] }) {
     const maxLeft = el.scrollWidth - el.clientWidth
     if (maxLeft <= 0) return
     const items = Array.from(el.children) as HTMLElement[]
+    // Scroll positions of each photo, independent of the container's own offset.
+    const positions = items.map((it) => it.offsetLeft - items[0].offsetLeft)
     if (dir === 1) {
       if (el.scrollLeft >= maxLeft - 8) return goTo(0)
-      const target = items.find((it) => it.offsetLeft > el.scrollLeft + 10)
-      goTo(target ? Math.min(target.offsetLeft - 10, maxLeft) : maxLeft)
+      const next = positions.find((p) => p > el.scrollLeft + 10)
+      goTo(next !== undefined ? Math.min(next, maxLeft) : maxLeft)
     } else {
       if (el.scrollLeft <= 8) return goTo(maxLeft)
-      const before = items.filter((it) => it.offsetLeft < el.scrollLeft - 10)
-      const target = before[before.length - 1]
-      goTo(target ? Math.max(target.offsetLeft - 10, 0) : 0)
+      const before = positions.filter((p) => p < el.scrollLeft - 10)
+      goTo(before.length ? Math.max(before[before.length - 1], 0) : 0)
     }
   }
 
