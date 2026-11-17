@@ -17,6 +17,7 @@ function Carousel({ photos }: { photos: BioPhoto[] }) {
   const lastTouch = useRef(0)
   const autoScrolling = useRef(false)
   const settle = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const [overflowing, setOverflowing] = useState(false)
 
   const goTo = (left: number) => {
     const el = ref.current
@@ -75,6 +76,12 @@ function Carousel({ photos }: { photos: BioPhoto[] }) {
       lastTouch.current = Date.now()
     }
     el.addEventListener('scroll', onScroll, { passive: true })
+    // Arrows only make sense when the photos overflow the screen.
+    const check = () => setOverflowing(el.scrollWidth > el.clientWidth + 8)
+    check()
+    const ro = new ResizeObserver(check)
+    ro.observe(el)
+    Array.from(el.children).forEach((it) => ro.observe(it))
     let visible = false
     const io = new IntersectionObserver((entries) => {
       visible = entries[0].isIntersecting
@@ -92,6 +99,7 @@ function Carousel({ photos }: { photos: BioPhoto[] }) {
       if (timer) clearInterval(timer)
       clearTimeout(settle.current)
       io.disconnect()
+      ro.disconnect()
       el.removeEventListener('scroll', onScroll)
     }
   }, [photos.length])
@@ -112,7 +120,7 @@ function Carousel({ photos }: { photos: BioPhoto[] }) {
           </figure>
         ))}
       </div>
-      {photos.length > 1 && (
+      {photos.length > 1 && overflowing && (
         <>
           <button className="car-btn prev" type="button" aria-label="Previous photo" onClick={() => advance(-1, true)}>
             {chevron(-1)}
