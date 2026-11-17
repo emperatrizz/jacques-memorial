@@ -50,6 +50,7 @@ export default function Home() {
         <p className="memory-line">{pick(ui.inLovingMemory, lang)}</p>
         <h1 className={`main-name ${lang === 'th' ? '' : 'script'}`}>{mainName}</h1>
         <p className="sub-name">{subName}</p>
+        <p className="life-dates">1937 – 2026</p>
         <Ornament />
       </section>
 
