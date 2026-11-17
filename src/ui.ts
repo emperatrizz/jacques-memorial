@@ -271,6 +271,11 @@ export const ui = {
     en: 'Too many submissions for now. Please wait a while and try again.',
     fr: 'Trop d’envois pour le moment. Veuillez patienter puis réessayer.',
   },
+  saveFile: {
+    th: 'บันทึก',
+    en: 'Save',
+    fr: 'Enregistrer',
+  },
   needSomething: {
     th: 'กรุณาเขียนข้อความหรือเลือกไฟล์อย่างน้อยหนึ่งรายการ',
     en: 'Please write a message or choose at least one file.',

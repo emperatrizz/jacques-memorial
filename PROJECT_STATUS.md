@@ -33,9 +33,16 @@ Per revised requirements, individual administrator accounts (not a shared passwo
 - Content now lives in SQLite on a Railway volume (`/data`): edits in the admin are instantly live, no redeploy. The DB seeds itself from `content/*.json` on first boot. Public endpoints unchanged
 - Tested: 20-step API test of all auth/role/moderation-of-admins flows + UI pass at phone size
 
-## Phase 2b — media uploads: planned
+## Phase 2b — submissions & media: SHIPPED (17 Nov 2026, live-tested)
 
-- Review queue for submitted memories and media: approve for public / keep family-only / reject; batch download of originals
+- Visitors (no accounts) share photos, videos, and written memories in ไทย/EN/FR from `/photos` and `/memories`; optional name; choice of **Public (after family approval)** or **Family only**
+- Storage: private Cloudflare R2 bucket `jacques-memorial-media` (Tara's account). Browsers upload directly via short-lived presigned PUT URLs (1 h); nothing public ever touches the bucket directly. Originals preserved untouched
+- Privacy: everything lands in a pending queue; the public gallery serves only approved+public items through 15-minute signed URLs; family-only items are never exposed through public endpoints (verified by test) and even "approved" family items stay private
+- Moderation (owner + family admins): `/admin` → Submissions — filters by status/visibility, inline previews, approve/reject/restore, per-file original downloads, streaming ZIP batch export (folders per contributor incl. their message), delete (also removes R2 objects)
+- Public gallery items have a "Save" button that downloads the original (camera-roll friendly)
+- Protection: honeypot field, 10 submissions/hour/IP, content-type allowlist (common photo/video types only — nothing executable), size caps 50 MB photos / 1 GB videos, upload-token verification, signed-URL tamper rejection
+- Recoverability: media lives in R2 independently of Railway; metadata via the owner's one-click database backup button. Storage usage/cost: Cloudflare dashboard → R2 (free tier 10 GB)
+- Tested: 22-step local suite + live end-to-end on jacquesprades.com (real upload into R2, CORS preflight, moderation by Tara, gallery display, deletion)
 
 ### Storage recommendation for photo/video submissions
 

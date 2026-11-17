@@ -140,6 +140,11 @@ export async function publicGallery(req, res) {
           kind: ALLOWED_TYPES[f.content_type]?.kind || 'image',
           contentType: f.content_type,
           url: await createDownloadUrl(f.storage_key, { contentType: f.content_type, origin: origin(req) }),
+          downloadUrl: await createDownloadUrl(f.storage_key, {
+            contentType: f.content_type,
+            filename: f.original_name,
+            origin: origin(req),
+          }),
         })
       }
       out.push({

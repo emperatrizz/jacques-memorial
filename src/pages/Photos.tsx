@@ -9,7 +9,7 @@ export type GalleryItem = {
   contributor?: string
   message?: string
   date: string
-  files: { id: string; kind: 'image' | 'video'; contentType: string; url: string }[]
+  files: { id: string; kind: 'image' | 'video'; contentType: string; url: string; downloadUrl: string }[]
 }
 
 export function useGallery() {
@@ -44,12 +44,13 @@ export default function Photos() {
               ) : (
                 <img src={f.url} alt={item.contributor || ''} loading="lazy" />
               )}
-              {(item.contributor || item.message) && (
-                <figcaption>
-                  {item.message && <span className="gallery-message">{item.message}</span>}
-                  {item.contributor && <span className="gallery-name">— {item.contributor}</span>}
-                </figcaption>
-              )}
+              <figcaption>
+                {item.message && <span className="gallery-message">{item.message}</span>}
+                {item.contributor && <span className="gallery-name">— {item.contributor}</span>}
+                <a className="gallery-save" href={f.downloadUrl}>
+                  ⬇ {pick(ui.saveFile, lang)}
+                </a>
+              </figcaption>
             </figure>
           )),
         )}
