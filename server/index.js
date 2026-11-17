@@ -1,21 +1,22 @@
 import express from 'express'
 import compression from 'compression'
-import { readFileSync, existsSync } from 'fs'
+import cookieParser from 'cookie-parser'
+import { existsSync } from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { getSiteContent, listUpdates } from './db.js'
+import adminRouter from './admin.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.join(__dirname, '..')
 const DIST = path.join(ROOT, 'dist')
-const CONTENT = path.join(ROOT, 'content')
 
 const app = express()
+app.set('trust proxy', 1) // Railway runs behind a proxy; needed for secure cookies + client IPs
 app.use(compression())
+app.use(express.json({ limit: '200kb' }))
+app.use(cookieParser())
 app.disable('x-powered-by')
-
-function readJson(file) {
-  return JSON.parse(readFileSync(path.join(CONTENT, file), 'utf8'))
-}
 
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, service: 'jacques-memorial' })
@@ -23,21 +24,23 @@ app.get('/api/health', (req, res) => {
 
 app.get('/api/updates', (req, res) => {
   try {
-    res.json(readJson('updates.json'))
+    res.json(listUpdates())
   } catch (err) {
-    console.error('Failed to read updates.json:', err.message)
+    console.error('Failed to read updates:', err.message)
     res.status(500).json({ error: 'content_unavailable' })
   }
 })
 
 app.get('/api/content', (req, res) => {
   try {
-    res.json(readJson('site.json'))
+    res.json(getSiteContent())
   } catch (err) {
-    console.error('Failed to read site.json:', err.message)
+    console.error('Failed to read site content:', err.message)
     res.status(500).json({ error: 'content_unavailable' })
   }
 })
+
+app.use('/api/admin', adminRouter)
 
 // Static frontend (built by `npm run build`)
 if (existsSync(DIST)) {

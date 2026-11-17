@@ -1,6 +1,6 @@
 # Project Status — Jacques Prades Memorial Website
 
-Last updated: 17 November 2026
+Last updated: 17 November 2026 (evening — admin area shipped)
 
 ## Live
 
@@ -18,17 +18,21 @@ Last updated: 17 November 2026
 - Photos, Memories, and Eulogy sections show "opening soon" pages
 - Verified on mobile and desktop sizes, light and dark mode, all three languages
 
-## Phase 2 — planned (next)
+## Phase 2a — family admin area: SHIPPED (17 Nov 2026)
 
-### Family admin area (mobile-friendly)
+Per revised requirements, individual administrator accounts (not a shared password):
 
-- Route: `/admin`, server-rendered React page behind a session login
-- Auth: single shared family password at first (bcrypt hash in a Railway environment variable, never in the repo), HTTP-only session cookie; can graduate to per-person accounts later if needed
-- Capabilities, in build order:
-  1. Edit ceremony details, flower info, and announcements in all three languages (writes move from repo JSON files to SQLite on a Railway volume, so edits are instant — no redeploy)
-  2. Review queue for submitted memories and media: approve for public / keep family-only / reject
-  3. Batch download of original uploaded files
-- The public site keeps reading the same `/api/content` and `/api/updates` endpoints, so nothing visible changes during the migration
+- **Owner account** (Tara): full access, manages administrators
+- **Family administrator accounts**: edit ceremony/flowers/announcements and (later) moderate submissions; cannot manage the owner or other admins
+- `/admin` — mobile-friendly, same visual language as the public site
+- Security: bcrypt password hashing (cost 12), HTTP-only Secure session cookies (30 days), login rate limiting (8 failures / 15 min / IP), role-based access control enforced server-side, one-time owner setup page protected by a `SETUP_CODE` environment variable, invitation links (single-use, 7-day expiry) so every person sets their own password — no credentials ever stored in the repo or known to the developer
+- Owner can invite, deactivate, and reactivate family administrators; deactivation kills live sessions; the owner account cannot be deactivated via the API
+- Content now lives in SQLite on a Railway volume (`/data`): edits in the admin are instantly live, no redeploy. The DB seeds itself from `content/*.json` on first boot. Public endpoints unchanged
+- Tested: 20-step API test of all auth/role/moderation-of-admins flows + UI pass at phone size
+
+## Phase 2b — media uploads: planned
+
+- Review queue for submitted memories and media: approve for public / keep family-only / reject; batch download of originals
 
 ### Storage recommendation for photo/video submissions
 
@@ -48,9 +52,11 @@ Last updated: 17 November 2026
 
 ## Outstanding / waiting on family
 
-- Ceremony details (dates, times, venue, Google Maps link)
-- Flower delivery address, recipient, delivery instructions
+- Tara: complete the one-time owner setup at `/admin` (setup code was sent privately)
+- Ceremony details (dates, times, venue, Google Maps link) — now enterable via `/admin`
+- Flower delivery address, recipient, delivery instructions — now enterable via `/admin`
 - Eulogy text and translations
+- Cloudflare account creation (free) when Phase 2b media storage starts
 - Decision: connect GitHub → Railway auto-deploy, or keep CLI deploys
 
 ## Operating notes
