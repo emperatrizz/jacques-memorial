@@ -793,6 +793,64 @@ form .button {
   font-weight: 600;
 }
 
+.gallery-zoomable {
+  cursor: zoom-in;
+}
+
+/* ——— Gallery lightbox ——— */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(10, 9, 8, 0.96);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: calc(16px + env(safe-area-inset-top)) 0 calc(16px + env(safe-area-inset-bottom));
+  touch-action: pan-y;
+}
+
+.lightbox img {
+  max-width: 100vw;
+  max-height: 72vh;
+  object-fit: contain;
+  display: block;
+}
+
+.lb-close {
+  position: absolute;
+  top: calc(10px + env(safe-area-inset-top));
+  right: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--hairline);
+  background: rgba(18, 17, 16, 0.6);
+  color: var(--accent-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+
+.lb-count {
+  position: absolute;
+  top: calc(20px + env(safe-area-inset-top));
+  left: 16px;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
+.lb-caption {
+  max-width: min(92vw, 560px);
+  margin-top: 14px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
 .memory-card .memory-text {
   margin: 0 0 10px;
   white-space: pre-line;
