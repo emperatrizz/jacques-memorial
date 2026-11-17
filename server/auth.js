@@ -26,6 +26,18 @@ export function destroySession(token) {
 }
 
 export function adminFromRequest(req) {
+  // Automation key (ADMIN_API_TOKEN env var): admin-level API access for the
+  // family's trusted tooling, explicitly authorized by the site owner.
+  // No account management and no password endpoints.
+  const bearer = req.get('authorization')
+  const apiToken = process.env.ADMIN_API_TOKEN
+  if (bearer?.startsWith('Bearer ') && apiToken && apiToken.length >= 32) {
+    const given = Buffer.from(bearer.slice(7))
+    const expect = Buffer.from(apiToken)
+    if (given.length === expect.length && crypto.timingSafeEqual(given, expect)) {
+      return { id: 0, name: 'Automation', role: 'admin', active: 1, automation: true }
+    }
+  }
   const token = req.cookies?.[COOKIE_NAME]
   if (!token) return null
   // Opportunistic cleanup of expired sessions

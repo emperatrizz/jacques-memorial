@@ -95,6 +95,7 @@ router.post('/logout', requireAdmin, (req, res) => {
 })
 
 router.post('/password', requireAdmin, (req, res) => {
+  if (req.admin.automation) return res.status(403).json({ error: 'not_for_automation' })
   const { current, next } = req.body || {}
   if (!validPassword(next)) return res.status(400).json({ error: 'password_too_short' })
   const row = db.prepare(`SELECT password_hash FROM admins WHERE id = ?`).get(req.admin.id)
