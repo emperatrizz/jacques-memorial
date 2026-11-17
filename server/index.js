@@ -18,6 +18,14 @@ app.use(express.json({ limit: '200kb' }))
 app.use(cookieParser())
 app.disable('x-powered-by')
 
+// Canonical domain: www redirects to the apex
+app.use((req, res, next) => {
+  if (req.hostname === 'www.jacquesprades.com') {
+    return res.redirect(301, `https://jacquesprades.com${req.originalUrl}`)
+  }
+  next()
+})
+
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, service: 'jacques-memorial' })
 })
