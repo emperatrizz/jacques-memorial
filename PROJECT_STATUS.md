@@ -71,6 +71,8 @@ Per revised requirements, individual administrator accounts (not a shared passwo
 
 ## Operating notes
 
+- Owner-authorized automation key (`ADMIN_API_TOKEN` env var, 17 Nov): lets the family's trusted tooling (Claude, from Tara's machine) publish announcements, edit content, and moderate via the admin API. Admin-level only — cannot manage accounts or change passwords. Rotate anytime by replacing the variable in Railway.
+
 - Never commit credentials; secrets live in Railway environment variables
 - Private family submissions must never appear in public galleries, APIs, or publicly accessible storage URLs
 - Editable site content: `content/site.json`, `content/updates.json` (trilingual fields `th`/`en`/`fr`)
