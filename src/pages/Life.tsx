@@ -4,7 +4,7 @@ import { pick, useLang } from '../i18n'
 import type { L10n } from '../i18n'
 import { ui } from '../ui'
 
-export type BioSection = { id: string; title: Partial<L10n>; body: Partial<L10n> }
+export type BioSection = { id: string; title: Partial<L10n>; body: Partial<L10n>; photos?: BioPhoto[] }
 export type BioPhoto = { key: string; caption?: Partial<L10n> | null }
 export type BioArticle = { id: string; title: string; description: Partial<L10n>; url: string }
 export type Biography = { sections: BioSection[]; photos: BioPhoto[]; articles: BioArticle[] }
@@ -39,6 +39,16 @@ export default function Life() {
 
       {bio?.sections.map((s) => (
         <section className="bio-section" key={s.id}>
+          {s.photos && s.photos.length > 0 && (
+            <div className="carousel">
+              {s.photos.map((p) => (
+                <figure className="carousel-item" key={p.key}>
+                  <img src={`/api/biography/photo?key=${encodeURIComponent(p.key)}`} alt="" loading="lazy" />
+                  {p.caption && <figcaption>{pick(p.caption, lang)}</figcaption>}
+                </figure>
+              ))}
+            </div>
+          )}
           <h2 className="bio-heading">{pick(s.title, lang)}</h2>
           <p className="bio-body">{pick(s.body, lang)}</p>
         </section>

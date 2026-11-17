@@ -13,6 +13,8 @@ export default function BiographyEditor() {
   const [msg, setMsg] = useState('')
   const [busy, setBusy] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
+  // Where the next uploaded photo goes: 'top' = page gallery, number = section index
+  const uploadTarget = useRef<'top' | number>('top')
 
   useEffect(() => {
     fetch('/api/biography')
@@ -46,7 +48,17 @@ export default function BiographyEditor() {
       )
       const put = await fetch(url, { method: 'PUT', headers, body: file })
       if (!put.ok) throw new Error('request_failed')
-      set((b) => ({ ...b, photos: [...b.photos, { key }] }))
+      const target = uploadTarget.current
+      if (target === 'top') {
+        set((b) => ({ ...b, photos: [...b.photos, { key }] }))
+      } else {
+        set((b) => ({
+          ...b,
+          sections: b.sections.map((s, j) =>
+            j === target ? { ...s, photos: [...(s.photos || []), { key }] } : s,
+          ),
+        }))
+      }
       setMsg('Photo uploaded — press Save to make it visible.')
     } catch (err) {
       setMsg(errorText(err))
@@ -85,7 +97,14 @@ export default function BiographyEditor() {
             e.target.value = ''
           }}
         />
-        <button className="button ghost file-button" type="button" onClick={() => fileInput.current?.click()}>
+        <button
+          className="button ghost file-button"
+          type="button"
+          onClick={() => {
+            uploadTarget.current = 'top'
+            fileInput.current?.click()
+          }}
+        >
           + Upload photograph
         </button>
         <div className="mod-media">
@@ -145,6 +164,79 @@ export default function BiographyEditor() {
             onChange={(v) => set((b) => ({ ...b, sections: b.sections.map((x, j) => (j === i ? { ...x, body: v } : x)) }))}
             multiline
           />
+          <span className="field-label">Carousel photos (shown above this section)</span>
+          <button
+            className="button ghost"
+            type="button"
+            onClick={() => {
+              uploadTarget.current = i
+              fileInput.current?.click()
+            }}
+          >
+            + Add photo to this section
+          </button>
+          {(s.photos || []).length > 0 && (
+            <div className="mod-media">
+              {(s.photos || []).map((p, pi) => (
+                <div className="mod-media-item" key={p.key}>
+                  <img src={`/api/biography/photo?key=${encodeURIComponent(p.key)}`} alt="" loading="lazy" />
+                  <L10nInput
+                    label="Caption (optional)"
+                    value={p.caption}
+                    onChange={(v) =>
+                      set((b) => ({
+                        ...b,
+                        sections: b.sections.map((x, j) =>
+                          j === i
+                            ? { ...x, photos: (x.photos || []).map((y, k) => (k === pi ? { ...y, caption: v } : y)) }
+                            : x,
+                        ),
+                      }))
+                    }
+                  />
+                  <div className="row-actions">
+                    <button
+                      className="button ghost"
+                      disabled={pi === 0}
+                      onClick={() =>
+                        set((b) => ({
+                          ...b,
+                          sections: b.sections.map((x, j) => (j === i ? { ...x, photos: moveItem(x.photos || [], pi, -1) } : x)),
+                        }))
+                      }
+                    >
+                      ←
+                    </button>
+                    <button
+                      className="button ghost"
+                      disabled={pi === (s.photos || []).length - 1}
+                      onClick={() =>
+                        set((b) => ({
+                          ...b,
+                          sections: b.sections.map((x, j) => (j === i ? { ...x, photos: moveItem(x.photos || [], pi, 1) } : x)),
+                        }))
+                      }
+                    >
+                      →
+                    </button>
+                    <button
+                      className="button ghost danger"
+                      onClick={() =>
+                        set((b) => ({
+                          ...b,
+                          sections: b.sections.map((x, j) =>
+                            j === i ? { ...x, photos: (x.photos || []).filter((_, k) => k !== pi) } : x,
+                          ),
+                        }))
+                      }
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       ))}
       <button

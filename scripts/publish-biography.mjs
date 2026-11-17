@@ -206,7 +206,7 @@ Jacques garda intact son enthousiasme pour les voyages, faisant découvrir à sa
 Parallèlement à sa vie professionnelle et familiale, Jacques soutint diverses initiatives caritatives, en particulier celles consacrées aux enfants et à l'éducation. Après le tsunami de l'océan Indien en 2004, il se rendit dans les zones sinistrées du sud de la Thaïlande pour venir en aide aux personnes frappées par la catastrophe.
 
 Même dans ses dernières années, il resta étroitement lié à Gamma Creations et continua de s'intéresser à ses équipes, à ses projets et à son avenir.`,
-        th: `ในช่วงปีเหล่านั้นเอง คุณแจ็คได้พบกับต้อย หญิงสาวไทยผู้ศึกษานาฏศิลป์ ทั้งสองแต่งงานกันและเลี้ยงดูลูกสาวสองคน คือธาราและลอร่า ในกรุงเทพฯ
+        th: `ในช่วงปีเหล่านั้นเอง คุณแจ็คได้พบกับต้อย หญิงสาวไทยผู้ศึกษานาฏศิลป์ ทั้งสองแต่งงานกันและเลี้ยงดูลูกสาวสองคน คือทาร่าและลอร่า ในกรุงเทพฯ
 
 บ้านของพวกเขากลายเป็นที่พบปะของมิตรสหายนานาชาติ ทั้งญาติพี่น้อง เพื่อนร่วมวิชาชีพอัญมณี และนักเดินทาง ผู้มาเยือนจากฝรั่งเศสและทั่วทุกมุมโลก มักได้ร่วมโต๊ะอาหารของครอบครัว ที่ซึ่งบทสนทนามักยืดยาวไปจนดึกดื่น
 
@@ -229,7 +229,7 @@ Même dans ses dernières années, il resta étroitement lié à Gamma Creations
 
 The resulting manuscript traces a life that crossed continents and generations, from the workshops of post-war Paris to the remote landscapes of South America and Asia, and finally to the jewellery industry of modern Bangkok.
 
-Jacques Prades died in 2026, leaving behind his family, the company he founded, and a lifetime of friendships and professional relationships spanning much of the world.
+Jacques Prades passed away in 2026, leaving behind his family, the company he founded, and a lifetime of friendships and professional relationships spanning much of the world.
 
 His story is inseparable from the history of Gamma Creations, but it also belongs to a much wider world: one of distant journeys, unexpected encounters, enduring friendships, and a curiosity that carried him far beyond the hills of his childhood.`,
         fr: `En 2019, alors que la maladie d'Alzheimer commençait à atteindre sa mémoire, la biographe Anaïd entreprit de documenter sa vie. S'appuyant sur des entretiens avec Jacques, sa famille, ses amis et ses collègues, ainsi que sur l'abondante correspondance qu'il avait conservée de ses voyages, elle composa le récit détaillé de son remarquable parcours.

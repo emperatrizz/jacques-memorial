@@ -114,7 +114,18 @@ bioAdminRouter.put('/', (req, res) => {
     b &&
     Array.isArray(b.sections) &&
     b.sections.length <= 30 &&
-    b.sections.every((s) => s.id && validL10n(s.title) && validL10n(s.body)) &&
+    b.sections.every(
+      (s) =>
+        s.id &&
+        validL10n(s.title) &&
+        validL10n(s.body) &&
+        (!s.photos ||
+          (Array.isArray(s.photos) &&
+            s.photos.length <= 20 &&
+            s.photos.every(
+              (p) => typeof p.key === 'string' && PHOTO_KEY.test(p.key) && (!p.caption || validL10n(p.caption)),
+            ))),
+    ) &&
     Array.isArray(b.photos) &&
     b.photos.length <= 40 &&
     b.photos.every((p) => typeof p.key === 'string' && PHOTO_KEY.test(p.key) && (!p.caption || validL10n(p.caption))) &&
