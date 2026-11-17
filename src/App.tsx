@@ -3,12 +3,11 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
 import Ceremony from './pages/Ceremony'
 import Flowers from './pages/Flowers'
-import ComingSoon from './pages/ComingSoon'
 import Photos from './pages/Photos'
 import Memories from './pages/Memories'
+import Eulogy from './pages/Eulogy'
 import Updates from './pages/Updates'
 import AdminApp from './admin/AdminApp'
-import { ui } from './ui'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -28,7 +27,7 @@ export default function App() {
         <Route path="/flowers" element={<Flowers />} />
         <Route path="/photos" element={<Photos />} />
         <Route path="/memories" element={<Memories />} />
-        <Route path="/eulogy" element={<ComingSoon title={ui.eulogyTitle} />} />
+        <Route path="/eulogy" element={<Eulogy />} />
         <Route path="/updates" element={<Updates />} />
         <Route path="/admin/*" element={<AdminApp />} />
         <Route path="*" element={<Home />} />

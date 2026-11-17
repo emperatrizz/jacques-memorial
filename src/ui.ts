@@ -271,6 +271,31 @@ export const ui = {
     en: 'Too many submissions for now. Please wait a while and try again.',
     fr: 'Trop d’envois pour le moment. Veuillez patienter puis réessayer.',
   },
+  eulogyNotStarted: {
+    th: 'การอ่านคำไว้อาลัยยังไม่เริ่ม ท่านสามารถอ่านล่วงหน้าได้',
+    en: 'The reading has not started yet. You are welcome to read ahead.',
+    fr: 'La lecture n’a pas encore commencé. Vous pouvez lire en avance.',
+  },
+  eulogyLiveNow: {
+    th: 'กำลังอ่านอยู่ขณะนี้',
+    en: 'Being read now',
+    fr: 'Lecture en cours',
+  },
+  returnToLive: {
+    th: 'กลับไปตามผู้อ่าน',
+    en: 'Return to live',
+    fr: 'Revenir au direct',
+  },
+  reconnecting: {
+    th: 'การเชื่อมต่อขัดข้อง กำลังเชื่อมต่อใหม่…',
+    en: 'Connection interrupted — reconnecting…',
+    fr: 'Connexion interrompue — reconnexion…',
+  },
+  eulogyEnded: {
+    th: 'การอ่านคำไว้อาลัยจบลงแล้ว ขอบคุณที่ร่วมรำลึกถึงคุณแจ็ค',
+    en: 'The reading has ended. Thank you for remembering Jacques with us.',
+    fr: 'La lecture est terminée. Merci d’avoir honoré la mémoire de Jacques avec nous.',
+  },
   saveFile: {
     th: 'บันทึก',
     en: 'Save',

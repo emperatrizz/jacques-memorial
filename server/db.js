@@ -71,6 +71,20 @@ CREATE TABLE IF NOT EXISTS submission_files (
 );
 CREATE INDEX IF NOT EXISTS idx_submissions_status ON submissions(status, visibility);
 CREATE INDEX IF NOT EXISTS idx_files_submission ON submission_files(submission_id);
+CREATE TABLE IF NOT EXISTS eulogy_paragraphs (
+  id TEXT PRIMARY KEY,
+  position INTEGER NOT NULL,
+  th TEXT NOT NULL DEFAULT '',
+  en TEXT NOT NULL DEFAULT '',
+  fr TEXT NOT NULL DEFAULT ''
+);
+CREATE TABLE IF NOT EXISTS eulogy_sessions (
+  name TEXT PRIMARY KEY CHECK(name IN ('live','rehearsal')),
+  current_index INTEGER NOT NULL DEFAULT -1,
+  controller_token TEXT,
+  updated_at TEXT
+);
+INSERT OR IGNORE INTO eulogy_sessions (name) VALUES ('live'), ('rehearsal');
 `)
 
 // ——— One-time seed from the repo's content files ———

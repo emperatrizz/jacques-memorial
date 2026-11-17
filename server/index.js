@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url'
 import { getSiteContent, listUpdates } from './db.js'
 import adminRouter from './admin.js'
 import submissionsRouter, { publicGallery } from './submissions.js'
+import { eulogyPublicRouter, eulogyAdminRouter, setupEulogyWs } from './eulogy.js'
 import { storageMode, localVerify, localWriteStream, localReadStream } from './storage.js'
 import { db } from './db.js'
 
@@ -51,8 +52,10 @@ app.get('/api/content', (req, res) => {
   }
 })
 
+app.use('/api/admin/eulogy', eulogyAdminRouter)
 app.use('/api/admin', adminRouter)
 app.use('/api/submissions', submissionsRouter)
+app.use('/api/eulogy', eulogyPublicRouter)
 app.get('/api/gallery', publicGallery)
 
 // Local-disk media endpoints — used only in development (no R2 credentials).
@@ -99,6 +102,7 @@ if (existsSync(DIST)) {
 }
 
 const PORT = process.env.PORT || 4300
-app.listen(PORT, '0.0.0.0', () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`jacques-memorial listening on 0.0.0.0:${PORT}`)
 })
+setupEulogyWs(server)

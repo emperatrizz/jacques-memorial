@@ -72,6 +72,15 @@ export default function Dashboard({ state, onChange }: { state: AdminState; onCh
               <path d="M1.5 1.5L7 7l-5.5 5.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </Link>
+          <Link to="/admin/eulogy" className="tile">
+            <span className="tile-text">
+              <span className="tile-title">Eulogy</span>
+              <span className="tile-desc">Edit the speech, rehearse, and present live</span>
+            </span>
+            <svg className="chevron" width="8" height="14" viewBox="0 0 8 14" fill="none" aria-hidden="true">
+              <path d="M1.5 1.5L7 7l-5.5 5.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </Link>
           {state.role === 'owner' && (
             <Link to="/admin/admins" className="tile">
               <span className="tile-text">

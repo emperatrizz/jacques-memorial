@@ -9,6 +9,9 @@ import ContentEditor from './ContentEditor'
 import Announcements from './Announcements'
 import Admins from './Admins'
 import Submissions from './Submissions'
+import EulogyEditor from './EulogyEditor'
+import Presenter from './Presenter'
+import EulogyPreview from './EulogyPreview'
 
 export type AdminState = {
   setupNeeded: boolean
@@ -69,6 +72,9 @@ export default function AdminApp() {
       <Route path="content" element={<ContentEditor />} />
       <Route path="updates" element={<Announcements />} />
       <Route path="submissions" element={<Submissions />} />
+      <Route path="eulogy" element={<EulogyEditor />} />
+      <Route path="eulogy/present" element={<Presenter />} />
+      <Route path="eulogy/preview" element={<EulogyPreview />} />
       <Route path="admins" element={state.role === 'owner' ? <Admins /> : <Navigate to="/admin" replace />} />
       <Route path="*" element={<Navigate to="/admin" replace />} />
     </Routes>
