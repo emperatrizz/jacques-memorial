@@ -798,6 +798,65 @@ form .button {
   font-weight: 600;
 }
 
+/* ——— Life & Legacy ——— */
+.bio-photos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.bio-photo {
+  margin: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+  background: var(--surface);
+}
+
+.bio-photo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.bio-photo figcaption {
+  padding: 8px 10px;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+.bio-section {
+  margin-bottom: 26px;
+}
+
+.bio-heading {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.55rem;
+  margin: 0 0 8px;
+  color: var(--accent-strong);
+}
+
+.press-heading {
+  margin-top: 30px;
+  margin-bottom: 12px;
+}
+
+.bio-body {
+  margin: 0;
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+.article-link {
+  color: var(--accent);
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
 /* ——— Admin moderation ——— */
 .filter-row {
   display: flex;

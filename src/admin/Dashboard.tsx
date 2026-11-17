@@ -72,6 +72,15 @@ export default function Dashboard({ state, onChange }: { state: AdminState; onCh
               <path d="M1.5 1.5L7 7l-5.5 5.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </Link>
+          <Link to="/admin/biography" className="tile">
+            <span className="tile-text">
+              <span className="tile-title">Life & Legacy</span>
+              <span className="tile-desc">Edit his story, photos, and publications</span>
+            </span>
+            <svg className="chevron" width="8" height="14" viewBox="0 0 8 14" fill="none" aria-hidden="true">
+              <path d="M1.5 1.5L7 7l-5.5 5.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </Link>
           <Link to="/admin/eulogy" className="tile">
             <span className="tile-text">
               <span className="tile-title">Eulogy</span>

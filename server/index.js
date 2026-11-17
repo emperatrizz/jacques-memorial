@@ -8,6 +8,7 @@ import { getSiteContent, listUpdates } from './db.js'
 import adminRouter from './admin.js'
 import submissionsRouter, { publicGallery } from './submissions.js'
 import { eulogyPublicRouter, eulogyAdminRouter, setupEulogyWs } from './eulogy.js'
+import { bioPublicRouter, bioAdminRouter } from './biography.js'
 import { storageMode, localVerify, localWriteStream, localReadStream } from './storage.js'
 import { db } from './db.js'
 
@@ -56,6 +57,8 @@ app.use('/api/admin/eulogy', eulogyAdminRouter)
 app.use('/api/admin', adminRouter)
 app.use('/api/submissions', submissionsRouter)
 app.use('/api/eulogy', eulogyPublicRouter)
+app.use('/api/admin/biography', bioAdminRouter)
+app.use('/api/biography', bioPublicRouter)
 app.get('/api/gallery', publicGallery)
 
 // Local-disk media endpoints — used only in development (no R2 credentials).

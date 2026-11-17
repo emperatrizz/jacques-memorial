@@ -71,6 +71,16 @@ export function BookIcon(props: IconProps) {
   )
 }
 
+/** Cut gem — life & legacy (his jeweller's craft) */
+export function GemIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M7.2 3.5h9.6l3.7 5.2L12 20.5 3.5 8.7z" />
+      <path d="M3.5 8.7h17M12 20.5 8.2 8.7l2.3-5.2M12 20.5l3.8-11.8-2.3-5.2" />
+    </Svg>
+  )
+}
+
 /** Ornamental divider under the name */
 export function Ornament({ width = 180 }: { width?: number }) {
   return (

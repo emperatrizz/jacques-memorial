@@ -103,6 +103,26 @@ export const ui = {
     en: 'Read the eulogy in three languages',
     fr: 'Lire l’éloge en trois langues',
   },
+  lifeTitle: {
+    th: 'เรื่องราวชีวิต',
+    en: 'Life & Legacy',
+    fr: 'Vie et héritage',
+  },
+  lifeDesc: {
+    th: 'เรื่องราว ผลงาน และมรดกของคุณแจ็ค',
+    en: 'His story, his work, his legacy',
+    fr: 'Son histoire, son œuvre, son héritage',
+  },
+  pressHeading: {
+    th: 'บทความและสิ่งพิมพ์',
+    en: 'Articles & publications',
+    fr: 'Articles et publications',
+  },
+  readSource: {
+    th: 'อ่านต้นฉบับ',
+    en: 'Read the source',
+    fr: 'Lire la source',
+  },
   // Ceremony page
   venue: {
     th: 'สถานที่',

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import LangSwitcher from '../components/LangSwitcher'
 import UpdatesBar from '../components/UpdatesBar'
 import Footer from '../components/Footer'
-import { CandleIcon, WreathIcon, CameraIcon, QuillIcon, BookIcon, Ornament } from '../components/icons'
+import { CandleIcon, WreathIcon, CameraIcon, QuillIcon, BookIcon, GemIcon, Ornament } from '../components/icons'
 import { pick, useLang } from '../i18n'
 import { ui } from '../ui'
 
@@ -13,6 +13,7 @@ const TILES = [
   { to: '/photos', title: ui.photosTitle, desc: ui.photosDesc, Icon: CameraIcon },
   { to: '/memories', title: ui.memoriesTitle, desc: ui.memoriesDesc, Icon: QuillIcon },
   { to: '/eulogy', title: ui.eulogyTitle, desc: ui.eulogyDesc, Icon: BookIcon },
+  { to: '/life', title: ui.lifeTitle, desc: ui.lifeDesc, Icon: GemIcon },
 ]
 
 export default function Home() {
