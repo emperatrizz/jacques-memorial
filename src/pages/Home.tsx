@@ -2,15 +2,16 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import LangSwitcher from '../components/LangSwitcher'
 import UpdatesBar from '../components/UpdatesBar'
+import { CandleIcon, WreathIcon, CameraIcon, QuillIcon, BookIcon, Ornament } from '../components/icons'
 import { pick, useLang } from '../i18n'
 import { ui } from '../ui'
 
 const TILES = [
-  { to: '/ceremony', title: ui.ceremonyTitle, desc: ui.ceremonyDesc },
-  { to: '/flowers', title: ui.flowersTitle, desc: ui.flowersDesc },
-  { to: '/photos', title: ui.photosTitle, desc: ui.photosDesc },
-  { to: '/memories', title: ui.memoriesTitle, desc: ui.memoriesDesc },
-  { to: '/eulogy', title: ui.eulogyTitle, desc: ui.eulogyDesc },
+  { to: '/ceremony', title: ui.ceremonyTitle, desc: ui.ceremonyDesc, Icon: CandleIcon },
+  { to: '/flowers', title: ui.flowersTitle, desc: ui.flowersDesc, Icon: WreathIcon },
+  { to: '/photos', title: ui.photosTitle, desc: ui.photosDesc, Icon: CameraIcon },
+  { to: '/memories', title: ui.memoriesTitle, desc: ui.memoriesDesc, Icon: QuillIcon },
+  { to: '/eulogy', title: ui.eulogyTitle, desc: ui.eulogyDesc, Icon: BookIcon },
 ]
 
 export default function Home() {
@@ -44,8 +45,9 @@ export default function Home() {
 
       <section className="name-block">
         <p className="memory-line">{pick(ui.inLovingMemory, lang)}</p>
-        <h1 className="main-name">{mainName}</h1>
+        <h1 className={`main-name ${lang === 'th' ? '' : 'script'}`}>{mainName}</h1>
         <p className="sub-name">{subName}</p>
+        <Ornament />
       </section>
 
       <UpdatesBar />
@@ -53,6 +55,9 @@ export default function Home() {
       <nav className="tiles" aria-label="Sections">
         {TILES.map((tile) => (
           <Link key={tile.to} to={tile.to} className="tile">
+            <span className="tile-icon">
+              <tile.Icon />
+            </span>
             <span className="tile-text">
               <span className="tile-title">{pick(tile.title, lang)}</span>
               <span className="tile-desc">{pick(tile.desc, lang)}</span>
