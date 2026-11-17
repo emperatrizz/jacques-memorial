@@ -9,30 +9,60 @@ export type BioPhoto = { key: string; caption?: Partial<L10n> | null }
 export type BioArticle = { id: string; title: string; description: Partial<L10n>; url: string }
 export type Biography = { sections: BioSection[]; photos: BioPhoto[]; articles: BioArticle[] }
 
-// Horizontal photo strip that gently advances on its own until the visitor
-// touches or scrolls it (then it stays under their control).
+// Slideshow: tap a photo or the arrows to move on; left alone, it drifts to
+// the next photo by itself and starts again after a short pause.
 function Carousel({ photos }: { photos: BioPhoto[] }) {
   const { lang } = useLang()
   const ref = useRef<HTMLDivElement>(null)
-  const stopped = useRef(false)
+  const lastTouch = useRef(0)
+  const autoScrolling = useRef(false)
+  const settle = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+
+  const goTo = (left: number) => {
+    const el = ref.current
+    if (!el) return
+    autoScrolling.current = true
+    clearTimeout(settle.current)
+    settle.current = setTimeout(() => {
+      autoScrolling.current = false
+    }, 1600)
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    el.scrollTo({ left, behavior: reduce ? 'auto' : 'smooth' })
+  }
+
+  const advance = (dir: 1 | -1, manual = false) => {
+    const el = ref.current
+    if (!el) return
+    if (manual) lastTouch.current = Date.now()
+    const maxLeft = el.scrollWidth - el.clientWidth
+    if (maxLeft <= 0) return
+    const items = Array.from(el.children) as HTMLElement[]
+    if (dir === 1) {
+      if (el.scrollLeft >= maxLeft - 8) return goTo(0)
+      const target = items.find((it) => it.offsetLeft > el.scrollLeft + 10)
+      goTo(target ? Math.min(target.offsetLeft - 10, maxLeft) : maxLeft)
+    } else {
+      if (el.scrollLeft <= 8) return goTo(maxLeft)
+      const before = items.filter((it) => it.offsetLeft < el.scrollLeft - 10)
+      const target = before[before.length - 1]
+      goTo(target ? Math.max(target.offsetLeft - 10, 0) : 0)
+    }
+  }
 
   useEffect(() => {
     const el = ref.current
     if (!el || photos.length < 2) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    // A horizontal scroll we didn't start = the visitor took over; vertical
-    // page scrolling over the photos must NOT stop the slideshow.
-    let autoScrolling = false
-    let settle: ReturnType<typeof setTimeout> | undefined
+    // A horizontal scroll we didn't start = the visitor swiping; pause the
+    // slideshow briefly. Vertical page scrolling never reaches this listener.
     const onScroll = () => {
-      if (autoScrolling) {
-        clearTimeout(settle)
-        settle = setTimeout(() => {
-          autoScrolling = false
+      if (autoScrolling.current) {
+        clearTimeout(settle.current)
+        settle.current = setTimeout(() => {
+          autoScrolling.current = false
         }, 400)
         return
       }
-      stopped.current = true
+      lastTouch.current = Date.now()
     }
     el.addEventListener('scroll', onScroll, { passive: true })
     let visible = false
@@ -40,39 +70,48 @@ function Carousel({ photos }: { photos: BioPhoto[] }) {
       visible = entries[0].isIntersecting
     }, { threshold: 0.4 })
     io.observe(el)
-    const timer = setInterval(() => {
-      if (stopped.current || !visible || document.hidden) return
-      const maxLeft = el.scrollWidth - el.clientWidth
-      autoScrolling = true
-      clearTimeout(settle)
-      settle = setTimeout(() => {
-        autoScrolling = false
-      }, 1600)
-      if (el.scrollLeft >= maxLeft - 8) {
-        el.scrollTo({ left: 0, behavior: 'smooth' })
-        return
-      }
-      // Items vary in width, so step to the first one past the current position.
-      const items = Array.from(el.children) as HTMLElement[]
-      const target = items.find((it) => it.offsetLeft > el.scrollLeft + 10)
-      el.scrollTo({ left: target ? Math.min(target.offsetLeft - 10, maxLeft) : maxLeft, behavior: 'smooth' })
-    }, 4500)
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const timer = reduce
+      ? undefined
+      : setInterval(() => {
+          if (!visible || document.hidden) return
+          if (Date.now() - lastTouch.current < 7000) return
+          advance(1)
+        }, 4500)
     return () => {
-      clearInterval(timer)
-      clearTimeout(settle)
+      if (timer) clearInterval(timer)
+      clearTimeout(settle.current)
       io.disconnect()
       el.removeEventListener('scroll', onScroll)
     }
   }, [photos.length])
 
+  const chevron = (d: 1 | -1) => (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <polyline points={d === 1 ? '9 5 16 12 9 19' : '15 5 8 12 15 19'} />
+    </svg>
+  )
+
   return (
-    <div className="carousel" ref={ref}>
-      {photos.map((p) => (
-        <figure className="carousel-item" key={p.key}>
-          <img src={`/api/biography/photo?key=${encodeURIComponent(p.key)}`} alt="" loading="lazy" />
-          {p.caption && <figcaption>{pick(p.caption, lang)}</figcaption>}
-        </figure>
-      ))}
+    <div className="carousel-wrap">
+      <div className="carousel" ref={ref}>
+        {photos.map((p) => (
+          <figure className="carousel-item" key={p.key} onClick={() => advance(1, true)}>
+            <img src={`/api/biography/photo?key=${encodeURIComponent(p.key)}`} alt="" loading="lazy" />
+            {p.caption && <figcaption>{pick(p.caption, lang)}</figcaption>}
+          </figure>
+        ))}
+      </div>
+      {photos.length > 1 && (
+        <>
+          <button className="car-btn prev" type="button" aria-label="Previous photo" onClick={() => advance(-1, true)}>
+            {chevron(-1)}
+          </button>
+          <button className="car-btn next" type="button" aria-label="Next photo" onClick={() => advance(1, true)}>
+            {chevron(1)}
+          </button>
+        </>
+      )}
     </div>
   )
 }

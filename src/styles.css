@@ -839,12 +839,47 @@ form .button {
   margin-bottom: 26px;
 }
 
+.carousel-wrap {
+  position: relative;
+  margin: 0 0 14px;
+}
+
+.car-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--hairline);
+  background: rgba(18, 17, 16, 0.6);
+  color: var(--accent-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.car-btn:hover {
+  background: rgba(18, 17, 16, 0.85);
+}
+
+.car-btn.prev {
+  left: 8px;
+}
+
+.car-btn.next {
+  right: 8px;
+}
+
 .carousel {
   display: flex;
   gap: 10px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  margin: 0 0 14px;
+  margin: 0;
   padding-bottom: 6px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -861,6 +896,7 @@ form .button {
   margin: 0;
   border-radius: 12px;
   overflow: hidden;
+  cursor: pointer;
   border: 1px solid var(--hairline);
   background: var(--surface);
 }
