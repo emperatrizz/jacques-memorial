@@ -55,10 +55,15 @@ Per revised requirements, individual administrator accounts (not a shared passwo
 - Metadata (contributor name, public/family-only choice, approval state) in SQLite on a Railway volume — same database as content editing
 - Fallback option if R2 setup is unwanted: Backblaze B2 (similar, S3-compatible). A Railway volume alone is **not** recommended for media (single disk, no signed URLs, hard to back up)
 
-## Phase 3 — before the ceremony
+## Phase 3 — live eulogy: SHIPPED (17 Nov 2026, placeholder text)
 
-- Multilingual eulogy page (text supplied separately)
-- Private iPad presenter controller advancing synchronized paragraphs on guests' phones (WebSocket broadcast, read-only for guests, with a manual-scroll fallback if the connection drops)
+- Admin → Eulogy: edit/reorder aligned trilingual paragraphs, no redeploys; speech stays **private until explicitly published** (currently unpublished; 5 clearly marked placeholder paragraphs seeded for rehearsal)
+- Presenter (`/admin/eulogy/present`, built for iPad Safari, responsive web — no native app): huge current paragraph with prev/next context, big Back/Next/Start/End controls, keyboard & presenter-remote keys, double-tap guard, progress counter, connection dot, reload-safe (place kept server-side)
+- One controller at a time: control tokens; a second device must explicitly take over, the first is cleanly locked out with a "take control back" option
+- Guests (`/eulogy`): trilingual, large text with independent A−/A+ (remembered per device), full speech preloaded, live paragraph highlighted and auto-centered, free rereading with a floating "Return to live", late joiners sync instantly; WebSocket with auto-reconnect + 10s HTTP polling fallback; published text is always readable as the static fallback
+- Rehearsal session fully isolated from the public live session (admin-only, separate state, WS subscription requires an admin session; verified) + admin "guest view" preview page
+- Also shipped: Open Graph/Twitter sharing preview (1200×630 photo at https://jacquesprades.com/og.jpg, absolute URLs, verified in live page metadata) for WhatsApp/LINE/Facebook
+- Tested: 11 API checks (privacy, control takeover, unauthorized attempts, bounds) + 7-scenario simulated multi-guest WebSocket suite (3 guests, late join, reconnection, rehearsal isolation, end-of-reading) + UI pass at phone and iPad viewports + production WS smoke test. **Not tested on physical iPads/phones — a real-device rehearsal is recommended before the ceremony**
 
 ## Outstanding / waiting on family
 
