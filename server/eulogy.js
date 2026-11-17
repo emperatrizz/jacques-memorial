@@ -16,16 +16,29 @@ function paragraphCount() {
   return db.prepare(`SELECT COUNT(*) AS n FROM eulogy_paragraphs`).get().n
 }
 
-function isPublished() {
+function settings() {
   const row = db.prepare(`SELECT json FROM content WHERE key = 'eulogy'`).get()
-  return row ? Boolean(JSON.parse(row.json).published) : false
+  const s = row ? JSON.parse(row.json) : {}
+  return { published: Boolean(s.published), revealAll: Boolean(s.revealAll) }
 }
 
-function setPublished(published) {
+function isPublished() {
+  return settings().published
+}
+
+function saveSettings(next) {
   db.prepare(
     `INSERT INTO content (key, json, updated_at) VALUES ('eulogy', ?, datetime('now'))
      ON CONFLICT(key) DO UPDATE SET json = excluded.json, updated_at = excluded.updated_at`,
-  ).run(JSON.stringify({ published: Boolean(published) }))
+  ).run(JSON.stringify({ ...settings(), ...next }))
+}
+
+/** How many paragraphs guests may currently see (progressive reveal). */
+function revealedCount() {
+  const s = settings()
+  if (!s.published) return 0
+  if (s.revealAll) return paragraphCount()
+  return getSession('live').max_index + 1
 }
 
 function getSession(name) {
@@ -41,6 +54,8 @@ function stateFor(name) {
     active: s.current_index >= 0,
     published: isPublished(),
     count: paragraphCount(),
+    // live: paragraphs guests may see; rehearsal: same rule for realistic preview
+    revealed: name === 'live' ? revealedCount() : s.max_index + 1,
   }
 }
 
@@ -123,9 +138,16 @@ export const eulogyPublicRouter = Router()
 eulogyPublicRouter.get('/', (req, res) => {
   const published = isPublished()
   const live = getSession('live')
+  // Only revealed paragraphs ever leave the server — guests cannot read ahead.
+  const revealed = revealedCount()
   res.json({
     published,
-    paragraphs: published ? getParagraphs().map(({ id, th, en, fr }) => ({ id, th, en, fr })) : [],
+    revealed,
+    paragraphs: published
+      ? getParagraphs()
+          .slice(0, revealed)
+          .map(({ id, th, en, fr }) => ({ id, th, en, fr }))
+      : [],
     live: { index: published ? live.current_index : -1, active: published && live.current_index >= 0 },
   })
 })
@@ -138,6 +160,7 @@ eulogyPublicRouter.get('/state', (req, res) => {
     index: published ? live.current_index : -1,
     active: published && live.current_index >= 0,
     count: published ? paragraphCount() : 0,
+    revealed: revealedCount(),
   })
 })
 
@@ -147,7 +170,7 @@ eulogyAdminRouter.use(requireAdmin)
 
 eulogyAdminRouter.get('/', (req, res) => {
   res.json({
-    published: isPublished(),
+    ...settings(),
     paragraphs: getParagraphs(),
     sessions: {
       live: stateFor('live'),
@@ -212,9 +235,25 @@ eulogyAdminRouter.delete('/paragraphs/:id', (req, res) => {
 })
 
 eulogyAdminRouter.post('/publish', (req, res) => {
-  setPublished(Boolean(req.body?.published))
+  saveSettings({ published: Boolean(req.body?.published) })
   broadcast('live')
-  res.json({ ok: true, published: isPublished() })
+  res.json({ ok: true, ...settings() })
+})
+
+// After the ceremony: reveal the whole text to visitors at once.
+eulogyAdminRouter.post('/reveal', (req, res) => {
+  saveSettings({ revealAll: Boolean(req.body?.revealAll) })
+  broadcast('live')
+  res.json({ ok: true, ...settings() })
+})
+
+// Rehearsal only: wind everything back for another practice run.
+eulogyAdminRouter.post('/reset-rehearsal', (req, res) => {
+  db.prepare(
+    `UPDATE eulogy_sessions SET current_index = -1, max_index = -1, updated_at = datetime('now') WHERE name = 'rehearsal'`,
+  ).run()
+  broadcast('rehearsal')
+  res.json({ ok: true })
 })
 
 // One presenter at a time: taking control invalidates the previous controller.
@@ -239,10 +278,9 @@ eulogyAdminRouter.post('/advance', (req, res) => {
   if (!Number.isInteger(index) || index < -1 || index >= count) {
     return res.status(400).json({ error: 'bad_index' })
   }
-  db.prepare(`UPDATE eulogy_sessions SET current_index = ?, updated_at = datetime('now') WHERE name = ?`).run(
-    index,
-    session,
-  )
+  db.prepare(
+    `UPDATE eulogy_sessions SET current_index = ?, max_index = MAX(max_index, ?), updated_at = datetime('now') WHERE name = ?`,
+  ).run(index, index, session)
   broadcast(session)
   res.json({ ok: true, state: stateFor(session) })
 })

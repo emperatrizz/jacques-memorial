@@ -87,6 +87,14 @@ CREATE TABLE IF NOT EXISTS eulogy_sessions (
 INSERT OR IGNORE INTO eulogy_sessions (name) VALUES ('live'), ('rehearsal');
 `)
 
+// Migration: track the furthest paragraph reached, for progressive reveal
+try {
+  db.exec(`ALTER TABLE eulogy_sessions ADD COLUMN max_index INTEGER NOT NULL DEFAULT -1`)
+  db.exec(`UPDATE eulogy_sessions SET max_index = current_index WHERE current_index > -1`)
+} catch {
+  /* column already exists */
+}
+
 // ——— One-time seed from the repo's content files ———
 function seedFromFiles() {
   const hasContent = db.prepare(`SELECT 1 FROM content WHERE key = 'site'`).get()

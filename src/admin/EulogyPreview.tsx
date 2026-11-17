@@ -7,30 +7,40 @@ import { useEulogySocket } from '../eulogy/useEulogySocket'
 
 type AdminEulogy = {
   paragraphs: (EulogyParagraph & { position: number })[]
-  sessions: { rehearsal: { index: number } }
+  sessions: { rehearsal: { index: number; revealed: number } }
 }
 
 /** Admin-only guest view of the REHEARSAL session — what guests would see. */
 export default function EulogyPreview() {
   const [paragraphs, setParagraphs] = useState<EulogyParagraph[]>([])
   const [index, setIndex] = useState(-1)
+  const [revealed, setRevealed] = useState(0)
 
   useEffect(() => {
     api<AdminEulogy>('/api/admin/eulogy').then((d) => {
       setParagraphs(d.paragraphs)
       setIndex(d.sessions.rehearsal.index)
+      setRevealed(d.sessions.rehearsal.revealed)
     })
   }, [])
 
-  const connected = useEulogySocket('rehearsal', (s) => setIndex(s.index))
+  const connected = useEulogySocket('rehearsal', (s) => {
+    setIndex(s.index)
+    setRevealed(s.revealed)
+  })
 
   return (
     <AdminShell title="Rehearsal — guest view" backTo="/admin/eulogy" backLabel="Eulogy">
       <p className="section-note">
         This is what guests' phones will show during the live reading (using the rehearsal session; the public page is
-        untouched). Open it next to the presenter to watch them move together.
+        untouched). Paragraphs appear one by one, exactly as guests will experience them.
       </p>
-      <EulogyReader paragraphs={paragraphs} liveIndex={index} active={index >= 0} connected={connected} />
+      <EulogyReader
+        paragraphs={paragraphs.slice(0, revealed)}
+        liveIndex={index}
+        active={index >= 0}
+        connected={connected}
+      />
     </AdminShell>
   )
 }

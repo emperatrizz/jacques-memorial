@@ -38,10 +38,10 @@ export default function Eulogy() {
     setLiveIndex(s.index)
     setActive(s.active)
     if (s.active) setEverActive(true)
-    // The speech was just published or edited while we're on the page
+    // Fetch newly revealed paragraphs (progressive reveal), or react to publishing
     setData((d) => {
       if (d && s.published !== d.published) load()
-      else if (d && s.published && s.count !== d.paragraphs.length) load()
+      else if (d && s.published && s.revealed !== d.paragraphs.length) load()
       return d
     })
   })

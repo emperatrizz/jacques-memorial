@@ -272,9 +272,9 @@ export const ui = {
     fr: 'Trop d’envois pour le moment. Veuillez patienter puis réessayer.',
   },
   eulogyNotStarted: {
-    th: 'การอ่านคำไว้อาลัยยังไม่เริ่ม ท่านสามารถอ่านล่วงหน้าได้',
-    en: 'The reading has not started yet. You are welcome to read ahead.',
-    fr: 'La lecture n’a pas encore commencé. Vous pouvez lire en avance.',
+    th: 'การอ่านคำไว้อาลัยยังไม่เริ่ม เนื้อหาจะปรากฏที่นี่ทีละย่อหน้าขณะอ่าน',
+    en: 'The reading has not started yet. The words will appear here as they are read.',
+    fr: 'La lecture n’a pas encore commencé. Les mots apparaîtront ici au fil de la lecture.',
   },
   eulogyLiveNow: {
     th: 'กำลังอ่านอยู่ขณะนี้',

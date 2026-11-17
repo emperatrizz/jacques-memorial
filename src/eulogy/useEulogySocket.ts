@@ -6,6 +6,7 @@ export type EulogyState = {
   active: boolean
   published: boolean
   count: number
+  revealed: number
 }
 
 /**

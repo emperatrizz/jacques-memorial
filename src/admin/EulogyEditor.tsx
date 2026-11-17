@@ -7,6 +7,7 @@ import type { EulogyParagraph } from '../eulogy/EulogyReader'
 type Para = EulogyParagraph & { position: number }
 type AdminEulogy = {
   published: boolean
+  revealAll: boolean
   paragraphs: Para[]
   sessions: { live: { index: number; active: boolean }; rehearsal: { index: number; active: boolean } }
 }
@@ -81,13 +82,26 @@ export default function EulogyEditor() {
         </div>
         <p className="section-note">
           {data.published
-            ? 'Visitors can read the eulogy on the public site. Unpublish to hide it again.'
+            ? data.revealAll
+              ? 'The whole text is visible to visitors.'
+              : 'Visitors see paragraphs one by one, only as they are read aloud. Nobody can read ahead.'
             : 'The text below is private. Publish only when the speech is ready for visitors.'}
         </p>
         <div className="row-actions">
           <button className="button ghost" onClick={() => setPublished(!data.published)}>
             {data.published ? 'Unpublish' : 'Publish to visitors'}
           </button>
+          {data.published && (
+            <button
+              className="button ghost"
+              onClick={async () => {
+                await api('/api/admin/eulogy/reveal', { method: 'POST', body: { revealAll: !data.revealAll } })
+                load()
+              }}
+            >
+              {data.revealAll ? 'Back to reveal-as-read' : 'Reveal whole text (after the ceremony)'}
+            </button>
+          )}
         </div>
       </div>
 
@@ -106,6 +120,15 @@ export default function EulogyEditor() {
           <Link className="button ghost danger" to="/admin/eulogy/present?session=live">
             Present LIVE
           </Link>
+          <button
+            className="button ghost"
+            onClick={async () => {
+              await api('/api/admin/eulogy/reset-rehearsal', { method: 'POST', body: {} })
+              load()
+            }}
+          >
+            Reset rehearsal
+          </button>
         </div>
       </div>
 
