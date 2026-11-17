@@ -855,8 +855,8 @@ form .button {
 }
 
 .carousel-item {
-  flex: 0 0 82%;
-  max-width: 440px;
+  flex: 0 0 auto;
+  max-width: 86vw;
   scroll-snap-align: center;
   margin: 0;
   border-radius: 12px;
@@ -865,15 +865,12 @@ form .button {
   background: var(--surface);
 }
 
-.carousel-item:only-child {
-  flex-basis: 100%;
-}
-
 .carousel-item img {
   display: block;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
+  height: clamp(220px, 58vw, 360px);
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
 }
 
 .carousel-item figcaption {

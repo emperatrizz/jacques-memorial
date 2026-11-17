@@ -33,12 +33,15 @@ function Carousel({ photos }: { photos: BioPhoto[] }) {
     io.observe(el)
     const timer = setInterval(() => {
       if (stopped.current || !visible || document.hidden) return
-      const first = el.firstElementChild as HTMLElement | null
-      if (!first) return
-      const gap = parseFloat(getComputedStyle(el).columnGap || '12') || 12
       const maxLeft = el.scrollWidth - el.clientWidth
-      const next = el.scrollLeft >= maxLeft - 8 ? 0 : el.scrollLeft + first.offsetWidth + gap
-      el.scrollTo({ left: next, behavior: 'smooth' })
+      if (el.scrollLeft >= maxLeft - 8) {
+        el.scrollTo({ left: 0, behavior: 'smooth' })
+        return
+      }
+      // Items vary in width, so step to the first one past the current position.
+      const items = Array.from(el.children) as HTMLElement[]
+      const target = items.find((it) => it.offsetLeft > el.scrollLeft + 10)
+      el.scrollTo({ left: target ? Math.min(target.offsetLeft - 10, maxLeft) : maxLeft, behavior: 'smooth' })
     }, 4500)
     return () => {
       clearInterval(timer)
