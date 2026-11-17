@@ -45,6 +45,7 @@ export default function Home() {
       </div>
 
       <section className="name-block">
+        <img src="/logo.png" alt="" className="crest" />
         <p className="memory-line">{pick(ui.inLovingMemory, lang)}</p>
         <h1 className={`main-name ${lang === 'th' ? '' : 'script'}`}>{mainName}</h1>
         <p className="sub-name">{subName}</p>

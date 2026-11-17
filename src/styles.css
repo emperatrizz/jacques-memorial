@@ -864,10 +864,10 @@ form .button {
   padding-top: 36px;
 }
 
-.site-logo {
+.crest {
   display: block;
-  width: 46px;
+  width: 64px;
   height: auto;
-  margin: 0 auto 10px;
-  opacity: 0.9;
+  margin: 0 auto 16px;
+  opacity: 0.95;
 }
