@@ -95,6 +95,15 @@ try {
   /* column already exists */
 }
 
+// Migration: remember the visibility the contributor chose, so admins can move
+// a public item to family-only (and back) without ever exposing a family-only choice.
+try {
+  db.exec(`ALTER TABLE submissions ADD COLUMN original_visibility TEXT`)
+} catch {
+  /* column already exists */
+}
+db.exec(`UPDATE submissions SET original_visibility = visibility WHERE original_visibility IS NULL`)
+
 // ——— One-time seed from the repo's content files ———
 function seedFromFiles() {
   const hasContent = db.prepare(`SELECT 1 FROM content WHERE key = 'site'`).get()

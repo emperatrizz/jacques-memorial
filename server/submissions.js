@@ -63,13 +63,14 @@ router.post('/start', async (req, res) => {
   const id = crypto.randomUUID()
   const uploadToken = crypto.randomBytes(24).toString('hex')
   db.prepare(
-    `INSERT INTO submissions (id, upload_token, contributor, message, visibility, status)
-     VALUES (?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO submissions (id, upload_token, contributor, message, visibility, original_visibility, status)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
   ).run(
     id,
     uploadToken,
     typeof contributor === 'string' && contributor.trim() ? contributor.trim().slice(0, MAX_NAME) : null,
     text || null,
+    visibility,
     visibility,
     list.length === 0 ? 'pending' : 'uploading',
   )

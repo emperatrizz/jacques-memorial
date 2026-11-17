@@ -264,6 +264,7 @@ router.get('/submissions', requireAdmin, async (req, res) => {
       contributor: s.contributor || undefined,
       message: s.message || undefined,
       visibility: s.visibility,
+      originalVisibility: s.original_visibility || s.visibility,
       status: s.status,
       createdAt: s.created_at,
       moderator: s.moderator || undefined,
@@ -285,6 +286,24 @@ router.post('/submissions/:id/status', requireAdmin, (req, res) => {
     )
     .run(status, req.admin.id, req.params.id)
   if (info.changes === 0) return res.status(404).json({ error: 'not_found' })
+  res.json({ ok: true })
+})
+
+// An admin may tuck any item away as family-only after the fact; returning it
+// to public is allowed only when the contributor chose public in the first place.
+router.post('/submissions/:id/visibility', requireAdmin, (req, res) => {
+  const { visibility } = req.body || {}
+  if (visibility !== 'public' && visibility !== 'family') {
+    return res.status(400).json({ error: 'bad_visibility' })
+  }
+  const sub = db.prepare(`SELECT * FROM submissions WHERE id = ? AND status != 'uploading'`).get(req.params.id)
+  if (!sub) return res.status(404).json({ error: 'not_found' })
+  if (visibility === 'public' && (sub.original_visibility || sub.visibility) !== 'public') {
+    return res.status(403).json({ error: 'contributor_chose_family' })
+  }
+  db.prepare(
+    `UPDATE submissions SET visibility = ?, moderated_by = ?, moderated_at = datetime('now') WHERE id = ?`,
+  ).run(visibility, req.admin.id, req.params.id)
   res.json({ ok: true })
 })
 

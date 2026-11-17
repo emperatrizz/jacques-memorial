@@ -17,6 +17,7 @@ type Submission = {
   contributor?: string
   message?: string
   visibility: 'public' | 'family'
+  originalVisibility: 'public' | 'family'
   status: 'pending' | 'approved' | 'rejected'
   createdAt: string
   moderator?: string
@@ -42,6 +43,11 @@ export default function Submissions() {
 
   async function setSubStatus(id: string, next: string) {
     await api(`/api/admin/submissions/${id}/status`, { method: 'POST', body: { status: next } })
+    load()
+  }
+
+  async function setSubVisibility(id: string, next: 'public' | 'family') {
+    await api(`/api/admin/submissions/${id}/visibility`, { method: 'POST', body: { visibility: next } })
     load()
   }
 
@@ -86,7 +92,11 @@ export default function Submissions() {
           <div className="submission-head">
             <span className="update-title">{s.contributor || 'Anonymous'}</span>
             <span className={`pending-chip ${s.visibility === 'family' ? 'family-chip' : ''}`}>
-              {s.visibility === 'family' ? 'Family only' : 'Public'}
+              {s.visibility === 'family'
+                ? s.originalVisibility === 'public'
+                  ? 'Family only (moved by family)'
+                  : 'Family only'
+                : 'Public'}
             </span>
           </div>
           <span className="update-date">
@@ -127,6 +137,16 @@ export default function Submissions() {
             {s.status !== 'pending' && (
               <button className="button ghost" onClick={() => setSubStatus(s.id, 'pending')}>
                 Back to pending
+              </button>
+            )}
+            {s.visibility === 'public' && (
+              <button className="button ghost" onClick={() => setSubVisibility(s.id, 'family')}>
+                Move to family only
+              </button>
+            )}
+            {s.visibility === 'family' && s.originalVisibility === 'public' && (
+              <button className="button ghost" onClick={() => setSubVisibility(s.id, 'public')}>
+                Return to public
               </button>
             )}
             <button className="button ghost danger" onClick={() => remove(s.id)}>
