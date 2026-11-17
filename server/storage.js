@@ -18,14 +18,22 @@ const BUCKET = process.env.R2_BUCKET || 'jacques-memorial-media'
 
 export const storageMode = R2_READY ? 'r2' : 'local'
 
+// Accepts either the bare account id or a pasted endpoint URL like
+// "https://<id>.r2.cloudflarestorage.com" (with or without protocol/path).
+function r2Endpoint() {
+  const raw = (process.env.R2_ACCOUNT_ID || '').trim().replace(/^https?:\/\//, '').replace(/\/.*$/, '')
+  const host = raw.includes('r2.cloudflarestorage.com') ? raw : `${raw}.r2.cloudflarestorage.com`
+  return `https://${host}`
+}
+
 let s3 = null
 if (R2_READY) {
   s3 = new S3Client({
     region: 'auto',
-    endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+    endpoint: r2Endpoint(),
     credentials: {
-      accessKeyId: process.env.R2_ACCESS_KEY_ID,
-      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+      accessKeyId: process.env.R2_ACCESS_KEY_ID.trim(),
+      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY.trim(),
     },
   })
 }
