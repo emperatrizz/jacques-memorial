@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import AdminShell from './AdminShell'
+import LangSwitcher from '../components/LangSwitcher'
 import { api } from './api'
 import EulogyReader from '../eulogy/EulogyReader'
 import type { EulogyParagraph } from '../eulogy/EulogyReader'
@@ -31,9 +32,13 @@ export default function EulogyPreview() {
 
   return (
     <AdminShell title="Rehearsal — guest view" backTo="/admin/eulogy" backLabel="Eulogy">
+      <div className="lang-bar preview-lang-bar">
+        <LangSwitcher />
+      </div>
       <p className="section-note">
         This is what guests' phones will show during the live reading (using the rehearsal session; the public page is
-        untouched). Paragraphs appear one by one, exactly as guests will experience them.
+        untouched). Paragraphs appear one by one, exactly as guests will experience them — switch languages freely, it
+        never affects the presenter.
       </p>
       <EulogyReader
         paragraphs={paragraphs.slice(0, revealed)}

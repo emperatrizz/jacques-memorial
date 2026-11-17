@@ -857,6 +857,15 @@ form .button {
 }
 
 /* ——— Eulogy reader (guests) ——— */
+.preview-lang-bar {
+  position: static;
+  margin: 0 0 6px;
+  padding: 0;
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
 .reader-toolbar {
   display: flex;
   align-items: center;
