@@ -37,17 +37,26 @@ function Carousel({ photos }: { photos: BioPhoto[] }) {
     const maxLeft = el.scrollWidth - el.clientWidth
     if (maxLeft <= 0) return
     const items = Array.from(el.children) as HTMLElement[]
-    // Scroll positions of each photo, independent of the container's own offset.
-    const positions = items.map((it) => it.offsetLeft - items[0].offsetLeft)
-    if (dir === 1) {
-      if (el.scrollLeft >= maxLeft - 8) return goTo(0)
-      const next = positions.find((p) => p > el.scrollLeft + 10)
-      goTo(next !== undefined ? Math.min(next, maxLeft) : maxLeft)
-    } else {
-      if (el.scrollLeft <= 8) return goTo(maxLeft)
-      const before = positions.filter((p) => p < el.scrollLeft - 10)
-      goTo(before.length ? Math.max(before[before.length - 1], 0) : 0)
-    }
+    const n = items.length
+    // Scroll position that centers each photo (matches scroll-snap-align: center),
+    // so stepping works with the browser's snapping instead of against it.
+    const desired = items.map((it) => {
+      const pos = it.offsetLeft - items[0].offsetLeft
+      return Math.max(0, Math.min(pos - (el.clientWidth - it.offsetWidth) / 2, maxLeft))
+    })
+    let cur = 0
+    let best = Infinity
+    desired.forEach((d, i) => {
+      const dist = Math.abs(d - el.scrollLeft)
+      if (dist < best) {
+        best = dist
+        cur = i
+      }
+    })
+    let next = (cur + dir + n) % n
+    // Photos clamped to the same end position would make a click look dead; skip past them.
+    while (next !== cur && Math.abs(desired[next] - desired[cur]) < 2) next = (next + dir + n) % n
+    goTo(desired[next])
   }
 
   useEffect(() => {
