@@ -40,6 +40,7 @@ Per revised requirements, individual administrator accounts (not a shared passwo
 - Privacy: everything lands in a pending queue; the public gallery serves only approved+public items through 15-minute signed URLs; family-only items are never exposed through public endpoints (verified by test) and even "approved" family items stay private
 - Moderation (owner + family admins): `/admin` → Submissions — filters by status/visibility, inline previews, approve/reject/restore, per-file original downloads, streaming ZIP batch export (folders per contributor incl. their message), delete (also removes R2 objects)
 - Public gallery items have a "Save" button that downloads the original (camera-roll friendly)
+- Tapping a gallery photo opens a full-screen viewer (17 Nov 2026): arrows, swipe, and keyboard step through all approved photos with a counter, caption, and Save link; ×/tap-outside/Escape closes. Videos keep their inline player
 - Protection: honeypot field, 10 submissions/hour/IP, content-type allowlist (common photo/video types only — nothing executable), size caps 50 MB photos / 1 GB videos, upload-token verification, signed-URL tamper rejection
 - Recoverability: media lives in R2 independently of Railway; metadata via the owner's one-click database backup button. Storage usage/cost: Cloudflare dashboard → R2 (free tier 10 GB)
 - Tested: 22-step local suite + live end-to-end on jacquesprades.com (real upload into R2, CORS preflight, moderation by Tara, gallery display, deletion)
