@@ -1,0 +1,32 @@
+{
+  "_help": "Edit this file to update ceremony and flower details. Every text field has three versions: th (Thai), en (English), fr (French). Set a field to null if it is not yet known — the site will show 'To be confirmed'. After editing, redeploy (git push) for changes to appear.",
+  "person": {
+    "fullName": "Jacques Leon Joseph Prades",
+    "thaiName": "คุณแจ็ค"
+  },
+  "ceremony": {
+    "venueName": null,
+    "venueAddress": null,
+    "mapsUrl": null,
+    "schedule": [],
+    "note": {
+      "th": "รายละเอียดพิธีจะประกาศให้ทราบที่นี่เมื่อได้รับการยืนยัน ขอบคุณสำหรับความรักและกำลังใจที่มีให้ครอบครัวเสมอมา",
+      "en": "The ceremony details will be announced here as soon as they are confirmed. Thank you for your love and support.",
+      "fr": "Les détails de la cérémonie seront annoncés ici dès qu'ils seront confirmés. Merci pour votre amour et votre soutien."
+    }
+  },
+  "flowers": {
+    "deliveryAddress": null,
+    "recipient": null,
+    "instructions": {
+      "th": "ที่อยู่สำหรับจัดส่งดอกไม้และพวงหรีดจะประกาศให้ทราบที่นี่ในเร็ว ๆ นี้",
+      "en": "The delivery address for flowers and wreaths will be published here shortly.",
+      "fr": "L'adresse de livraison pour les fleurs et les couronnes sera publiée ici prochainement."
+    },
+    "abroad": {
+      "th": "สำหรับผู้ที่ประสงค์จะส่งดอกไม้จากต่างประเทศ เราจะแนะนำวิธีการสั่งดอกไม้กับร้านท้องถิ่นที่นี่เมื่อยืนยันสถานที่แล้ว",
+      "en": "If you would like to send flowers from abroad, guidance on ordering through local florists will be published here once the venue is confirmed.",
+      "fr": "Si vous souhaitez envoyer des fleurs depuis l'étranger, des conseils pour commander auprès de fleuristes locaux seront publiés ici dès que le lieu sera confirmé."
+    }
+  }
+}

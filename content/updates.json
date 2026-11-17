@@ -1,0 +1,32 @@
+[
+  {
+    "id": "site-launch",
+    "date": "2026-11-17",
+    "title": {
+      "th": "เว็บไซต์อนุสรณ์เปิดให้เข้าชมแล้ว",
+      "en": "The memorial website is now online",
+      "fr": "Le site commémoratif est en ligne"
+    },
+    "body": {
+      "th": "รายละเอียดพิธี ข้อมูลการส่งดอกไม้ และการร่วมแบ่งปันภาพถ่ายและความทรงจำ จะประกาศที่หน้านี้เมื่อได้รับการยืนยัน",
+      "en": "Ceremony details, flower delivery information, and photo and memory sharing will be announced here as they are confirmed.",
+      "fr": "Les détails de la cérémonie, les informations de livraison de fleurs et le partage de photos et de souvenirs seront annoncés ici au fur et à mesure."
+    },
+    "link": "/"
+  },
+  {
+    "id": "ceremony-pending",
+    "date": "2026-11-17",
+    "title": {
+      "th": "กำหนดการพิธีจะประกาศเร็ว ๆ นี้",
+      "en": "Ceremony schedule will be announced soon",
+      "fr": "Le programme de la cérémonie sera annoncé prochainement"
+    },
+    "body": {
+      "th": "เมื่อยืนยันวัน เวลา และสถานที่แล้ว จะแจ้งให้ทราบที่นี่ทันที",
+      "en": "As soon as the dates, times and venue are confirmed, they will be published here.",
+      "fr": "Dès que les dates, horaires et le lieu seront confirmés, ils seront publiés ici."
+    },
+    "link": "/ceremony"
+  }
+]
