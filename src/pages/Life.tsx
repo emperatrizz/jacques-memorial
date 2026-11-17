@@ -9,32 +9,23 @@ export type BioPhoto = { key: string; caption?: Partial<L10n> | null }
 export type BioArticle = { id: string; title: string; description: Partial<L10n>; url: string }
 export type Biography = { sections: BioSection[]; photos: BioPhoto[]; articles: BioArticle[] }
 
-// Slideshow: tap a photo or the arrows to move on; left alone, it drifts to
-// the next photo by itself and starts again after a short pause.
+// Photo strip: still until the visitor moves it — tap a photo or the arrows
+// for the next one, or swipe freely.
 function Carousel({ photos }: { photos: BioPhoto[] }) {
   const { lang } = useLang()
   const ref = useRef<HTMLDivElement>(null)
-  const lastTouch = useRef(0)
-  const autoScrolling = useRef(false)
-  const settle = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const [overflowing, setOverflowing] = useState(false)
 
   const goTo = (left: number) => {
     const el = ref.current
     if (!el) return
-    autoScrolling.current = true
-    clearTimeout(settle.current)
-    settle.current = setTimeout(() => {
-      autoScrolling.current = false
-    }, 1600)
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     el.scrollTo({ left, behavior: reduce ? 'auto' : 'smooth' })
   }
 
-  const advance = (dir: 1 | -1, manual = false) => {
+  const advance = (dir: 1 | -1) => {
     const el = ref.current
     if (!el) return
-    if (manual) lastTouch.current = Date.now()
     const maxLeft = el.scrollWidth - el.clientWidth
     if (maxLeft <= 0) return
     const items = Array.from(el.children) as HTMLElement[]
@@ -63,44 +54,14 @@ function Carousel({ photos }: { photos: BioPhoto[] }) {
   useEffect(() => {
     const el = ref.current
     if (!el || photos.length < 2) return
-    // A horizontal scroll we didn't start = the visitor swiping; pause the
-    // slideshow briefly. Vertical page scrolling never reaches this listener.
-    const onScroll = () => {
-      if (autoScrolling.current) {
-        clearTimeout(settle.current)
-        settle.current = setTimeout(() => {
-          autoScrolling.current = false
-        }, 400)
-        return
-      }
-      lastTouch.current = Date.now()
-    }
-    el.addEventListener('scroll', onScroll, { passive: true })
     // Arrows only make sense when the photos overflow the screen.
     const check = () => setOverflowing(el.scrollWidth > el.clientWidth + 8)
     check()
     const ro = new ResizeObserver(check)
     ro.observe(el)
     Array.from(el.children).forEach((it) => ro.observe(it))
-    let visible = false
-    const io = new IntersectionObserver((entries) => {
-      visible = entries[0].isIntersecting
-    }, { threshold: 0.4 })
-    io.observe(el)
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const timer = reduce
-      ? undefined
-      : setInterval(() => {
-          if (!visible || document.hidden) return
-          if (Date.now() - lastTouch.current < 7000) return
-          advance(1)
-        }, 4500)
     return () => {
-      if (timer) clearInterval(timer)
-      clearTimeout(settle.current)
-      io.disconnect()
       ro.disconnect()
-      el.removeEventListener('scroll', onScroll)
     }
   }, [photos.length])
 
@@ -114,7 +75,7 @@ function Carousel({ photos }: { photos: BioPhoto[] }) {
     <div className="carousel-wrap">
       <div className="carousel" ref={ref}>
         {photos.map((p) => (
-          <figure className="carousel-item" key={p.key} onClick={() => advance(1, true)}>
+          <figure className="carousel-item" key={p.key} onClick={() => advance(1)}>
             <img src={`/api/biography/photo?key=${encodeURIComponent(p.key)}`} alt="" loading="lazy" />
             {p.caption && <figcaption>{pick(p.caption, lang)}</figcaption>}
           </figure>
@@ -122,10 +83,10 @@ function Carousel({ photos }: { photos: BioPhoto[] }) {
       </div>
       {photos.length > 1 && overflowing && (
         <>
-          <button className="car-btn prev" type="button" aria-label="Previous photo" onClick={() => advance(-1, true)}>
+          <button className="car-btn prev" type="button" aria-label="Previous photo" onClick={() => advance(-1)}>
             {chevron(-1)}
           </button>
-          <button className="car-btn next" type="button" aria-label="Next photo" onClick={() => advance(1, true)}>
+          <button className="car-btn next" type="button" aria-label="Next photo" onClick={() => advance(1)}>
             {chevron(1)}
           </button>
         </>

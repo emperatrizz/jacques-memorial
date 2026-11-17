@@ -125,8 +125,7 @@ main {
   aspect-ratio: 4 / 5;
   max-height: 58vh;
   object-fit: cover;
-  /* Keeps the subject (right side of the current photo) in frame when cropping */
-  object-position: 80% 40%;
+  object-position: 50% 35%;
 }
 
 .cover-placeholder {
