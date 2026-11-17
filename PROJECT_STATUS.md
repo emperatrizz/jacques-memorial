@@ -4,7 +4,10 @@ Last updated: 17 November 2026 (evening — admin area shipped)
 
 ## Live
 
-- Public site: https://jacques-memorial-production.up.railway.app
+- **Public site: https://jacquesprades.com** (custom domain, 17 Nov 2026)
+  - `www.jacquesprades.com` 301-redirects to the apex domain
+  - Domain registered at Cloudflare Registrar (Tara's account, ~$11/yr, auto-renews); DNS at Cloudflare, records "DNS only" so Railway manages the Let's Encrypt certificate (auto-renewing)
+  - The original https://jacques-memorial-production.up.railway.app stays functional
 - Repo: https://github.com/emperatrizz/jacques-memorial (branch `main`)
 - Hosting: Railway project `jacques-memorial` (separate from any other project)
 - Deploys: run via Railway CLI (`npx @railway/cli up` from the project folder). GitHub is a code backup; push-to-main auto-deploy is **not** connected yet.
@@ -56,7 +59,7 @@ Per revised requirements, individual administrator accounts (not a shared passwo
 - Ceremony details (dates, times, venue, Google Maps link) — now enterable via `/admin`
 - Flower delivery address, recipient, delivery instructions — now enterable via `/admin`
 - Eulogy text and translations
-- Cloudflare account creation (free) when Phase 2b media storage starts
+- Cloudflare account now exists (created for the domain) — ready for Phase 2b R2 storage
 - Decision: connect GitHub → Railway auto-deploy, or keep CLI deploys
 
 ## Operating notes
