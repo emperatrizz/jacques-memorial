@@ -62,3 +62,14 @@ export function formatDate(iso: string, lang: Lang): string {
     return iso
   }
 }
+
+export function formatDateWithDay(iso: string, lang: Lang): string {
+  const locale = lang === 'th' ? 'th-TH' : lang === 'fr' ? 'fr-FR' : 'en-GB'
+  try {
+    return new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(
+      new Date(iso + 'T12:00:00'),
+    )
+  } catch {
+    return iso
+  }
+}

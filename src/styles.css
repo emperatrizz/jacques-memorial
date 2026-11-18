@@ -439,6 +439,69 @@ main {
   font-size: 1rem;
 }
 
+/* ——— Schedule grouped by day, as a small timeline ——— */
+.schedule-day {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.schedule-day:last-child {
+  border-bottom: none;
+  padding-bottom: 2px;
+}
+
+.schedule-date {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 2px;
+}
+
+.timeline-item {
+  position: relative;
+  padding: 0 0 14px 24px;
+}
+
+.timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+/* Connector line between a marker and the next one */
+.timeline-item:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 6.5px;
+  top: 18px;
+  bottom: -2px;
+  width: 1px;
+  background: var(--hairline);
+}
+
+.tl-marker {
+  position: absolute;
+  left: 2px;
+  top: 5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.tl-marker.filled {
+  background: var(--accent);
+}
+
+.timeline-item .schedule-when {
+  display: block;
+}
+
 /* ——— Coming soon ——— */
 .coming-soon {
   text-align: center;

@@ -1,11 +1,24 @@
 import PageShell from '../components/PageShell'
 import { useContent } from '../content'
-import { formatDate, pick, useLang } from '../i18n'
+import { formatDateWithDay, pick, useLang } from '../i18n'
 import { ui } from '../ui'
 
 function Pending() {
   const { lang } = useLang()
   return <span className="pending-chip">{pick(ui.toBeConfirmed, lang)}</span>
+}
+
+type ScheduleEntry = { date?: string; time?: unknown; title: unknown }
+
+// Consecutive entries on the same date render as one day with a small timeline.
+function groupByDate<T extends ScheduleEntry>(schedule: T[]): { date: string; items: T[] }[] {
+  const groups: { date: string; items: T[] }[] = []
+  for (const item of schedule) {
+    const last = groups[groups.length - 1]
+    if (last && last.date === (item.date || '')) last.items.push(item)
+    else groups.push({ date: item.date || '', items: [item] })
+  }
+  return groups
 }
 
 export default function Ceremony() {
@@ -40,17 +53,20 @@ export default function Ceremony() {
       <div className="card">
         <h2 className="card-label">{pick(ui.schedule, lang)}</h2>
         {ceremony && ceremony.schedule.length > 0 ? (
-          <ul className="schedule-list">
-            {ceremony.schedule.map((item, i) => (
-              <li key={i} className="schedule-item">
-                <span className="schedule-when">
-                  {item.date ? formatDate(item.date, lang) : ''}
-                  {item.time ? ` · ${pick(item.time, lang)}` : ''}
-                </span>
-                <span className="schedule-title">{pick(item.title, lang)}</span>
-              </li>
-            ))}
-          </ul>
+          groupByDate(ceremony.schedule).map((day) => (
+            <div className="schedule-day" key={day.date}>
+              {day.date && <h3 className="schedule-date">{formatDateWithDay(day.date, lang)}</h3>}
+              <ul className="timeline">
+                {day.items.map((item, i) => (
+                  <li key={i} className="timeline-item">
+                    <span className={`tl-marker ${i === 0 ? 'filled' : ''}`} aria-hidden="true" />
+                    {item.time && <span className="schedule-when">{pick(item.time, lang)}</span>}
+                    <span className="schedule-title">{pick(item.title, lang)}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
         ) : (
           <Pending />
         )}
