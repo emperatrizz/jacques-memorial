@@ -66,9 +66,11 @@ export function formatDate(iso: string, lang: Lang): string {
 export function formatDateWithDay(iso: string, lang: Lang): string {
   const locale = lang === 'th' ? 'th-TH' : lang === 'fr' ? 'fr-FR' : 'en-GB'
   try {
-    return new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(
+    const s = new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(
       new Date(iso + 'T12:00:00'),
     )
+    // French weekdays come back lowercase ("dimanche") — capitalize for display.
+    return s.charAt(0).toLocaleUpperCase(locale) + s.slice(1)
   } catch {
     return iso
   }
