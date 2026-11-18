@@ -80,7 +80,7 @@ Per revised requirements, individual administrator accounts (not a shared passwo
 ## Outstanding / waiting on family
 
 - Tara: complete the one-time owner setup at `/admin` (setup code was sent privately)
-- Ceremony details (dates, times, venue, Google Maps link) — now enterable via `/admin`
+- Ceremony venue CONFIRMED and published (18 Nov 2026): Wat Pariwat Temple (วัดปริวาส), Sala 4, Thursday–Sunday, with Google Maps link; trilingual site update posted. Still waiting: exact dates and the daily schedule/times
 - Flower delivery address, recipient, delivery instructions — now enterable via `/admin`
 - Eulogy text and translations
 - Cloudflare account now exists (created for the domain) — ready for Phase 2b R2 storage
