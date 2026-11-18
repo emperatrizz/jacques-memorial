@@ -451,9 +451,15 @@ main {
 }
 
 .schedule-date {
-  margin: 0 0 10px;
-  font-size: 0.95rem;
-  font-weight: 600;
+  display: inline-block;
+  margin: 0 0 12px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  border: 1px solid var(--hairline);
+  color: var(--accent-strong);
+  font-size: 1.05rem;
+  font-weight: 700;
 }
 
 .timeline {
