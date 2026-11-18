@@ -80,7 +80,7 @@ Per revised requirements, individual administrator accounts (not a shared passwo
 ## Outstanding / waiting on family
 
 - Tara: complete the one-time owner setup at `/admin` (setup code was sent privately)
-- Ceremony venue CONFIRMED and published (18 Nov 2026): Wat Pariwat Temple (วัดปริวาส), Sala 4, Thu 19 – Sun 22 Nov 2026, with Google Maps link; trilingual site update posted. Full schedule published 18 Nov: Abhidhamma chanting 19–21 Nov 19.00, cremation day 22 Nov (monks' meal 10.30, cremation 16.00)
+- Ceremony venue CONFIRMED and published (18 Nov 2026): Wat Pariwat Temple (วัดปริวาส), Sala 4, Thu 19 – Sun 22 Nov 2026, with Google Maps link; trilingual site update posted. Full schedule published 18 Nov: Abhidhamma chanting 19–21 Nov 19.00, cremation day 22 Nov: monks' meal 10.30, ceremony begins ~15.00, words of remembrance, cremation 16.00; schedule renders day-grouped with a dot/circle timeline
 - Flower delivery address, recipient, delivery instructions — now enterable via `/admin`
 - Eulogy text and translations
 - Cloudflare account now exists (created for the domain) — ready for Phase 2b R2 storage
