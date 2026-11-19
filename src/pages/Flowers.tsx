@@ -38,6 +38,17 @@ export default function Flowers() {
         <div className="card">
           <h2 className="card-label">{pick(ui.fromAbroad, lang)}</h2>
           <p className="card-value">{pick(flowers.abroad, lang)}</p>
+          {flowers.florists && flowers.florists.length > 0 && (
+            <div className="florist-list">
+              {flowers.florists.map((f) => (
+                <a className="card update-card linked florist-card" key={f.url} href={f.url} target="_blank" rel="noopener noreferrer">
+                  <span className="update-title">{f.name}</span>
+                  {f.note && <span className="update-body">{pick(f.note, lang)}</span>}
+                  <span className="article-link">{f.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/.*$/, '')} ↗</span>
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </PageShell>

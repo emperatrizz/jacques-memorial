@@ -30,6 +30,7 @@ export type SiteContent = {
     recipient: Partial<L10n> | null
     instructions: Partial<L10n> | null
     abroad: Partial<L10n> | null
+    florists?: { name: string; url: string; note?: Partial<L10n> | null }[]
   }
 }
 

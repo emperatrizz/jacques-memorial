@@ -866,6 +866,17 @@ form .button {
   cursor: zoom-in;
 }
 
+.florist-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.florist-card {
+  margin: 0;
+}
+
 /* ——— Gallery lightbox ——— */
 .lightbox {
   position: fixed;
