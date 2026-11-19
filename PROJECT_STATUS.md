@@ -93,3 +93,7 @@ Per revised requirements, individual administrator accounts (not a shared passwo
 - Never commit credentials; secrets live in Railway environment variables
 - Private family submissions must never appear in public galleries, APIs, or publicly accessible storage URLs
 - Editable site content: `content/site.json`, `content/updates.json` (trilingual fields `th`/`en`/`fr`)
+
+## Flowers & attire guidance (19 Nov 2026)
+- Flowers & Wreaths page published: delivery to Sala 4, Wat Pariwat Temple, marked for Jacques Léon Joseph Prades (คุณแจ็ค); three overseas-friendly Bangkok florists listed as link cards (Basketeer funeral collection, Cattleya, Best Bloom Buddy wreath collection); trilingual update posted
+- Schedule refined: Sunday 10.30 marked optional; 15.00 renamed "Main ceremony begins"; ceremony note now asks guests to arrive a little early for the Sunday 3 pm main ceremony and to dress respectfully for the temple (no shorts, shoulders covered; white or black welcome)
