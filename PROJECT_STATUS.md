@@ -97,3 +97,4 @@ Per revised requirements, individual administrator accounts (not a shared passwo
 ## Flowers & attire guidance (19 Nov 2026)
 - Flowers & Wreaths page published: delivery to Sala 4, Wat Pariwat Temple, marked for Jacques Léon Joseph Prades (คุณแจ็ค); three overseas-friendly Bangkok florists listed as link cards (Basketeer funeral collection, Cattleya, Best Bloom Buddy wreath collection); trilingual update posted
 - Schedule refined: Sunday 10.30 marked optional; 15.00 renamed "Main ceremony begins"; ceremony note now asks guests to arrive a little early for the Sunday 3 pm main ceremony and to dress respectfully for the temple (no shorts, shoulders covered; white or black welcome)
+- Time change 20 Nov: Sunday main ceremony now ~16.00, cremation 17.00 (was 15.00/16.00); bold trilingual time-change announcement posted (update bodies now support **bold**)
