@@ -554,6 +554,11 @@ main {
   color: var(--ink-soft);
 }
 
+.update-body strong {
+  color: var(--accent-strong);
+  font-weight: 700;
+}
+
 /* ——— Admin ——— */
 .auth-main {
   padding-top: 24px;

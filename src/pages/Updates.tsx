@@ -4,6 +4,12 @@ import { useContent } from '../content'
 import { formatDate, pick, useLang } from '../i18n'
 import { ui } from '../ui'
 
+// Minimal emphasis support: **text** in an update body renders bold.
+export function renderEmphasis(text: string) {
+  const parts = text.split(/\*\*(.+?)\*\*/g)
+  return parts.map((p, i) => (i % 2 === 1 ? <strong key={i}>{p}</strong> : p))
+}
+
 export default function Updates() {
   const { lang } = useLang()
   const { updates, error, loaded } = useContent()
@@ -20,7 +26,7 @@ export default function Updates() {
             <>
               <span className="update-date">{formatDate(u.date, lang)}</span>
               <span className="update-title">{pick(u.title, lang)}</span>
-              {u.body && <span className="update-body">{pick(u.body, lang)}</span>}
+              {u.body && <span className="update-body">{renderEmphasis(pick(u.body, lang))}</span>}
             </>
           )
           return u.link ? (
