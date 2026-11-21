@@ -6,6 +6,7 @@ import Flowers from './pages/Flowers'
 import Photos from './pages/Photos'
 import Memories from './pages/Memories'
 import Eulogy from './pages/Eulogy'
+import EulogyDisplay from './pages/EulogyDisplay'
 import Life from './pages/Life'
 import Updates from './pages/Updates'
 import AdminApp from './admin/AdminApp'
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="/photos" element={<Photos />} />
         <Route path="/memories" element={<Memories />} />
         <Route path="/eulogy" element={<Eulogy />} />
+        <Route path="/eulogy/display" element={<EulogyDisplay />} />
         <Route path="/life" element={<Life />} />
         <Route path="/updates" element={<Updates />} />
         <Route path="/admin/*" element={<AdminApp />} />
