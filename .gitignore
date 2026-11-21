@@ -5,3 +5,4 @@ data-dev/
 .env
 .DS_Store
 *.log
+eulogy-backup.html
