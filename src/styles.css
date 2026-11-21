@@ -1294,8 +1294,10 @@ form .button {
 }
 
 .return-live {
+  /* Floats under the sticky toolbar: on phones, a bottom-fixed button hides
+     behind the browser bar that expands when people scroll up to reread. */
   position: fixed;
-  bottom: calc(22px + env(safe-area-inset-bottom));
+  top: 118px;
   left: 50%;
   transform: translateX(-50%);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55);

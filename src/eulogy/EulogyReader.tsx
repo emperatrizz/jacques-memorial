@@ -44,17 +44,38 @@ export default function EulogyReader({
     }
   }, [scale])
 
-  // Follow the reader: bring the TOP of the current paragraph into view, so
-  // guests always start reading from its first line. Re-runs when the newly
-  // revealed paragraph's text arrives (it is fetched just after the index
-  // changes), otherwise the scroll would fire before the paragraph exists.
+  // Height of the sticky language bar + reader toolbar the text sits under.
+  const TOP_OFFSET = 112
+
+  const snapToCurrent = (index: number, smooth: boolean) => {
+    const el = refs.current.get(index)
+    if (!el) return
+    const y = Math.max(0, el.getBoundingClientRect().top + window.scrollY - TOP_OFFSET)
+    programmaticScroll.current = Date.now()
+    window.scrollTo({ top: y, behavior: smooth ? 'smooth' : 'auto' })
+  }
+
+  // Follow the reader: put the TOP of the current paragraph right under the
+  // toolbar. Re-runs when the newly revealed paragraph's text arrives (it is
+  // fetched just after the index changes). Smooth scrolling can land short
+  // when the page is still settling, so it quietly corrects any drift for a
+  // moment afterwards — unless the guest scrolls away themselves (following
+  // then turns false and this effect is cleaned up).
   useEffect(() => {
     if (!active || !following || liveIndex < 0) return
-    const el = refs.current.get(liveIndex)
-    if (!el) return
-    programmaticScroll.current = Date.now()
+    if (!refs.current.get(liveIndex)) return
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+    snapToCurrent(liveIndex, !reduce)
+    const correct = () => {
+      const el = refs.current.get(liveIndex)
+      if (el && Math.abs(el.getBoundingClientRect().top - TOP_OFFSET) > 14) snapToCurrent(liveIndex, false)
+    }
+    const t1 = window.setTimeout(correct, 650)
+    const t2 = window.setTimeout(correct, 1300)
+    return () => {
+      clearTimeout(t1)
+      clearTimeout(t2)
+    }
   }, [liveIndex, active, following, paragraphs.length])
 
   // A manual scroll pauses following (programmatic scrolls don't)
@@ -115,11 +136,7 @@ export default function EulogyReader({
           className="button return-live"
           onClick={() => {
             setFollowing(true)
-            const el = refs.current.get(liveIndex)
-            if (el) {
-              programmaticScroll.current = Date.now()
-              el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-            }
+            snapToCurrent(liveIndex, true)
           }}
         >
           ↓ {pick(ui.returnToLive, lang)}
