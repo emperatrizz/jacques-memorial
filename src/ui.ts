@@ -178,7 +178,7 @@ export const ui = {
   footer: {
     th: 'จัดทำด้วยความรักโดยครอบครัว',
     en: 'Made with love by his family',
-    fr: 'Réalisé avec amour par sa famille',
+    fr: 'Créé avec amour par sa famille',
   },
   loadError: {
     th: 'ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่อีกครั้ง',
