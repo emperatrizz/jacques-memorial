@@ -19,6 +19,7 @@ export default function EulogyEditor() {
   const [draft, setDraft] = useState<{ id?: string; th: string; en: string; fr: string } | null>(null)
   const [msg, setMsg] = useState('')
   const [confirmDelete, setConfirmDelete] = useState('')
+  const [confirmResetLive, setConfirmResetLive] = useState(false)
 
   const load = () => api<AdminEulogy>('/api/admin/eulogy').then(setData)
   useEffect(() => {
@@ -128,6 +129,20 @@ export default function EulogyEditor() {
             }}
           >
             Reset rehearsal
+          </button>
+          <button
+            className="button ghost danger"
+            onClick={async () => {
+              if (!confirmResetLive) {
+                setConfirmResetLive(true)
+                return
+              }
+              setConfirmResetLive(false)
+              await api('/api/admin/eulogy/reset-live', { method: 'POST', body: {} })
+              load()
+            }}
+          >
+            {confirmResetLive ? 'Press again: winds the LIVE page back' : 'Reset live session'}
           </button>
         </div>
       </div>

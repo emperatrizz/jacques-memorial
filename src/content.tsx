@@ -22,6 +22,8 @@ export type SiteContent = {
     venueName: Partial<L10n> | null
     venueAddress: Partial<L10n> | null
     mapsUrl: string | null
+    livestreamUrl?: string | null
+    livestreamNote?: Partial<L10n> | null
     schedule: ScheduleItem[]
     note: Partial<L10n> | null
   }
@@ -32,6 +34,11 @@ export type SiteContent = {
     abroad: Partial<L10n> | null
     florists?: { name: string; url: string; note?: Partial<L10n> | null }[]
   }
+}
+
+export function youtubeEmbedUrl(url: string): string | null {
+  const m = url.match(/(?:youtube\.com\/(?:live|embed|shorts)\/|youtu\.be\/|youtube\.com\/watch\?v=)([\w-]{6,})/)
+  return m ? `https://www.youtube.com/embed/${m[1]}` : null
 }
 
 type ContentState = {

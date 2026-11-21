@@ -1,5 +1,5 @@
 import PageShell from '../components/PageShell'
-import { useContent } from '../content'
+import { useContent, youtubeEmbedUrl } from '../content'
 import { formatDateWithDay, pick, useLang } from '../i18n'
 import { ui } from '../ui'
 
@@ -49,6 +49,26 @@ export default function Ceremony() {
           </a>
         )}
       </div>
+
+      {ceremony?.livestreamUrl && (
+        <div className="card">
+          <h2 className="card-label">{pick(ui.livestream, lang)}</h2>
+          {ceremony.livestreamNote && <p className="card-value">{pick(ceremony.livestreamNote, lang)}</p>}
+          {youtubeEmbedUrl(ceremony.livestreamUrl) && (
+            <div className="video-wrap">
+              <iframe
+                src={youtubeEmbedUrl(ceremony.livestreamUrl)!}
+                title={pick(ui.livestream, lang)}
+                allow="autoplay; encrypted-media; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          )}
+          <a className="button" href={ceremony.livestreamUrl} target="_blank" rel="noopener noreferrer">
+            {pick(ui.openYouTube, lang)}
+          </a>
+        </div>
+      )}
 
       <div className="card">
         <h2 className="card-label">{pick(ui.schedule, lang)}</h2>

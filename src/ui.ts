@@ -144,6 +144,16 @@ export const ui = {
     en: 'Open in Google Maps',
     fr: 'Ouvrir dans Google Maps',
   },
+  livestream: {
+    th: 'ถ่ายทอดสด',
+    en: 'Livestream',
+    fr: 'En direct',
+  },
+  openYouTube: {
+    th: 'เปิดดูบน YouTube',
+    en: 'Open on YouTube',
+    fr: 'Ouvrir sur YouTube',
+  },
   // Flowers page
   deliveryAddress: {
     th: 'ที่อยู่สำหรับจัดส่ง',

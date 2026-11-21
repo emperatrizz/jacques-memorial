@@ -256,6 +256,17 @@ eulogyAdminRouter.post('/reset-rehearsal', (req, res) => {
   res.json({ ok: true })
 })
 
+// Winds the LIVE session back so nothing is revealed to visitors — for a test
+// before the ceremony or a false start on the day. Leaves text and the
+// published flag untouched.
+eulogyAdminRouter.post('/reset-live', (req, res) => {
+  db.prepare(
+    `UPDATE eulogy_sessions SET current_index = -1, max_index = -1, updated_at = datetime('now') WHERE name = 'live'`,
+  ).run()
+  broadcast('live')
+  res.json({ ok: true })
+})
+
 // One presenter at a time: taking control invalidates the previous controller.
 eulogyAdminRouter.post('/control', (req, res) => {
   const session = req.body?.session === 'rehearsal' ? 'rehearsal' : 'live'
