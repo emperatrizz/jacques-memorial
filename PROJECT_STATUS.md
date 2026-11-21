@@ -98,3 +98,8 @@ Per revised requirements, individual administrator accounts (not a shared passwo
 - Flowers & Wreaths page published: delivery to Sala 4, Wat Pariwat Temple, marked for Jacques Léon Joseph Prades (คุณแจ็ค); three overseas-friendly Bangkok florists listed as link cards (Basketeer funeral collection, Cattleya, Best Bloom Buddy wreath collection); trilingual update posted
 - Schedule refined: Sunday 10.30 marked optional; 15.00 renamed "Main ceremony begins"; ceremony note now asks guests to arrive a little early for the Sunday 3 pm main ceremony and to dress respectfully for the temple (no shorts, shoulders covered; white or black welcome)
 - Time change 20 Nov: Sunday main ceremony now ~16.00, cremation 17.00 (was 15.00/16.00); bold trilingual time-change announcement posted (update bodies now support **bold**)
+
+## Livestream + eulogy readiness (21 Nov 2026)
+- YouTube livestream (youtube.com/live/rERjZuCzjwk) embedded on the Ceremony page between Venue and Schedule, with an "Open on YouTube" button and trilingual note; announcement posted linking /ceremony and mentioning the Eulogy page for translations
+- New admin control: "Reset live session" (Admin → Eulogy, double-press) + POST /api/admin/eulogy/reset-live — winds the public live session back (indices to -1) without touching text or the published flag; for pre-ceremony tests and false starts
+- Production end-to-end eulogy test passed 21 Nov: published placeholders, public guest WebSocket (wss://…/ws/eulogy) received index -1→0→1 in real time, public API served revealed paragraphs, then reset-live + unpublish returned the public page to empty (verified). Real speech text still to be loaded
