@@ -1277,6 +1277,9 @@ form .button {
   margin-bottom: 10px;
   border-left: 3px solid transparent;
   border-radius: 10px;
+  /* Keeps the paragraph's first line below the sticky header + toolbar
+     when the reader auto-scrolls to it */
+  scroll-margin-top: 118px;
   white-space: pre-line;
   transition: background-color 0.4s, border-color 0.4s, opacity 0.4s;
 }

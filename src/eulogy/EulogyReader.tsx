@@ -44,15 +44,18 @@ export default function EulogyReader({
     }
   }, [scale])
 
-  // Follow the reader: scroll the current paragraph to the center
+  // Follow the reader: bring the TOP of the current paragraph into view, so
+  // guests always start reading from its first line. Re-runs when the newly
+  // revealed paragraph's text arrives (it is fetched just after the index
+  // changes), otherwise the scroll would fire before the paragraph exists.
   useEffect(() => {
     if (!active || !following || liveIndex < 0) return
     const el = refs.current.get(liveIndex)
-    if (el) {
-      programmaticScroll.current = Date.now()
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }
-  }, [liveIndex, active, following])
+    if (!el) return
+    programmaticScroll.current = Date.now()
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+  }, [liveIndex, active, following, paragraphs.length])
 
   // A manual scroll pauses following (programmatic scrolls don't)
   useEffect(() => {
@@ -115,7 +118,7 @@ export default function EulogyReader({
             const el = refs.current.get(liveIndex)
             if (el) {
               programmaticScroll.current = Date.now()
-              el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+              el.scrollIntoView({ behavior: 'smooth', block: 'start' })
             }
           }}
         >
