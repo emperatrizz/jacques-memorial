@@ -921,6 +921,26 @@ form .button {
   opacity: 0.5;
 }
 
+/* White panel so the code scans from across the room */
+.tv-qr-panel {
+  background: #fff;
+  padding: 2.2vh;
+  border-radius: 2vh;
+}
+
+.tv-qr {
+  display: block;
+  width: 36vh;
+  height: 36vh;
+}
+
+.tv-scan-hint {
+  color: var(--ink-soft);
+  font-size: 2.4vh;
+  line-height: 1.7;
+  text-align: center;
+}
+
 .video-wrap {
   position: relative;
   aspect-ratio: 16 / 9;

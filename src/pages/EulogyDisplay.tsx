@@ -76,7 +76,14 @@ export default function EulogyDisplay() {
         ) : (
           <div className="tv-idle">
             <span className="tv-name">Jacques Léon Joseph Prades</span>
-            <span className="tv-dot" aria-hidden="true" />
+            <div className="tv-qr-panel">
+              <img className="tv-qr" src="/qr-eulogy.png" alt="QR code: jacquesprades.com/eulogy" />
+            </div>
+            <span className="tv-scan-hint">
+              สแกนเพื่ออ่านคำกล่าวอาลัยในภาษาของคุณ
+              <br />
+              Scan to follow the eulogy in your language · Scannez pour suivre dans votre langue
+            </span>
           </div>
         )}
       </div>
