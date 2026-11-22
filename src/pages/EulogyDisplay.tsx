@@ -84,6 +84,8 @@ export default function EulogyDisplay() {
               สแกนเพื่ออ่านคำกล่าวอาลัยในภาษาของคุณ
               <br />
               Scan to follow the eulogy in your language · Scannez pour suivre dans votre langue
+              <br />
+              <span lang="ja">スキャンすると、追悼の言葉をご自分の言語でお読みいただけます</span>
             </span>
           </div>
         )}
