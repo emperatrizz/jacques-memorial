@@ -3,7 +3,15 @@ import { pick, useLang } from '../i18n'
 import { ui } from '../ui'
 import type { Lang } from '../i18n'
 
-export type EulogyParagraph = { id: string; th: string; en: string; fr: string }
+export type EulogyParagraph = { id: string; th: string; en: string; fr: string; ja?: string }
+
+export type ReadingLang = Lang | 'ja'
+const READING_LANGS: { code: ReadingLang; label: string }[] = [
+  { code: 'th', label: 'ไทย' },
+  { code: 'en', label: 'English' },
+  { code: 'fr', label: 'Français' },
+  { code: 'ja', label: '日本語' },
+]
 
 /**
  * Shared reading view: large text, A−/A+ controls, live-paragraph highlight,
@@ -24,6 +32,24 @@ export default function EulogyReader({
   ended?: boolean
 }) {
   const { lang } = useLang()
+  // The language the eulogy TEXT is read in — follows the site language until
+  // the visitor picks one here (Japanese exists only for the eulogy).
+  const [readingLang, setReadingLang] = useState<ReadingLang>(() => {
+    try {
+      const saved = localStorage.getItem('eulogy-lang')
+      if (saved === 'th' || saved === 'en' || saved === 'fr' || saved === 'ja') return saved
+    } catch {
+      /* ignore */
+    }
+    return lang
+  })
+  useEffect(() => {
+    try {
+      localStorage.setItem('eulogy-lang', readingLang)
+    } catch {
+      /* ignore */
+    }
+  }, [readingLang])
   const [scale, setScale] = useState(() => {
     try {
       const s = parseFloat(localStorage.getItem('eulogy-scale') || '1')
@@ -92,10 +118,21 @@ export default function EulogyReader({
     }
   }, [])
 
-  const textFor = (p: EulogyParagraph, l: Lang) => p[l] || p.en || p.th || p.fr
+  const textFor = (p: EulogyParagraph, l: ReadingLang) => p[l] || p.en || p.th || p.fr
 
   return (
     <div className="eulogy-reader">
+      <div className="reading-langs" role="group" aria-label="Eulogy language">
+        {READING_LANGS.map((l) => (
+          <button
+            key={l.code}
+            className={`lang-btn ${readingLang === l.code ? 'active' : ''}`}
+            onClick={() => setReadingLang(l.code)}
+          >
+            {l.label}
+          </button>
+        ))}
+      </div>
       <div className="reader-toolbar">
         <span className="reader-status">
           {!connected && <span className="reconnect-note">{pick(ui.reconnecting, lang)}</span>}
@@ -125,8 +162,9 @@ export default function EulogyReader({
             className={`reader-paragraph ${active && i === liveIndex ? 'current' : ''} ${
               active && i < liveIndex ? 'past' : ''
             }`}
+            lang={readingLang}
           >
-            {textFor(p, lang)}
+            {textFor(p, readingLang)}
           </div>
         ))}
       </div>

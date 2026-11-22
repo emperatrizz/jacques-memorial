@@ -12,11 +12,11 @@ type AdminEulogy = {
   sessions: { live: { index: number; active: boolean }; rehearsal: { index: number; active: boolean } }
 }
 
-const EMPTY = { th: '', en: '', fr: '' }
+const EMPTY = { th: '', en: '', fr: '', ja: '' }
 
 export default function EulogyEditor() {
   const [data, setData] = useState<AdminEulogy | null>(null)
-  const [draft, setDraft] = useState<{ id?: string; th: string; en: string; fr: string } | null>(null)
+  const [draft, setDraft] = useState<{ id?: string; th: string; en: string; fr: string; ja?: string } | null>(null)
   const [msg, setMsg] = useState('')
   const [confirmDelete, setConfirmDelete] = useState('')
   const [confirmResetLive, setConfirmResetLive] = useState(false)
@@ -156,13 +156,15 @@ export default function EulogyEditor() {
       {draft && (
         <div className="card">
           <h2 className="card-label">{draft.id ? 'Edit paragraph' : 'New paragraph'}</h2>
-          {(['th', 'en', 'fr'] as const).map((l) => (
+          {(['th', 'en', 'fr', 'ja'] as const).map((l) => (
             <div className="field" key={l}>
-              <span className="field-label">{l === 'th' ? 'ไทย' : l === 'en' ? 'English' : 'Français'}</span>
+              <span className="field-label">
+                {l === 'th' ? 'ไทย' : l === 'en' ? 'English' : l === 'fr' ? 'Français' : '日本語 (optional)'}
+              </span>
               <textarea
                 className="input"
                 rows={4}
-                value={draft[l]}
+                value={draft[l] ?? ''}
                 onChange={(e) => setDraft((d) => d && { ...d, [l]: e.target.value })}
               />
             </div>

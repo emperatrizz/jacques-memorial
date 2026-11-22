@@ -14,10 +14,11 @@ type EulogyData = {
 // Usage: /eulogy/display?lang=th (also en / fr).
 export default function EulogyDisplay() {
   const [params] = useSearchParams()
-  const lang = (['th', 'en', 'fr'].includes(params.get('lang') || '') ? params.get('lang') : 'th') as
+  const lang = (['th', 'en', 'fr', 'ja'].includes(params.get('lang') || '') ? params.get('lang') : 'th') as
     | 'th'
     | 'en'
     | 'fr'
+    | 'ja'
   const [data, setData] = useState<EulogyData | null>(null)
   const [liveIndex, setLiveIndex] = useState(-1)
   const boxRef = useRef<HTMLDivElement>(null)

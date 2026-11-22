@@ -1238,6 +1238,17 @@ form .button {
   -webkit-backdrop-filter: none;
 }
 
+.reading-langs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.reading-langs .lang-btn {
+  border: 1px solid var(--hairline);
+}
+
 .reader-toolbar {
   display: flex;
   align-items: center;

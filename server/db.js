@@ -104,6 +104,13 @@ try {
 }
 db.exec(`UPDATE submissions SET original_visibility = visibility WHERE original_visibility IS NULL`)
 
+// Migration: Japanese as a fourth eulogy language (optional per paragraph)
+try {
+  db.exec(`ALTER TABLE eulogy_paragraphs ADD COLUMN ja TEXT`)
+} catch {
+  /* column already exists */
+}
+
 // ——— One-time seed from the repo's content files ———
 function seedFromFiles() {
   const hasContent = db.prepare(`SELECT 1 FROM content WHERE key = 'site'`).get()

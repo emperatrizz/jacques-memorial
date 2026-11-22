@@ -9,7 +9,7 @@ import { requireAdmin } from './auth.js'
 const SESSIONS = ['live', 'rehearsal']
 
 function getParagraphs() {
-  return db.prepare(`SELECT id, position, th, en, fr FROM eulogy_paragraphs ORDER BY position`).all()
+  return db.prepare(`SELECT id, position, th, en, fr, ja FROM eulogy_paragraphs ORDER BY position`).all()
 }
 
 function paragraphCount() {
@@ -146,7 +146,7 @@ eulogyPublicRouter.get('/', (req, res) => {
     paragraphs: published
       ? getParagraphs()
           .slice(0, revealed)
-          .map(({ id, th, en, fr }) => ({ id, th, en, fr }))
+          .map(({ id, th, en, fr, ja }) => ({ id, th, en, fr, ja: ja || undefined }))
       : [],
     live: { index: published ? live.current_index : -1, active: published && live.current_index >= 0 },
   })
@@ -180,19 +180,22 @@ eulogyAdminRouter.get('/', (req, res) => {
 })
 
 function validTexts(b) {
-  return b && ['th', 'en', 'fr'].every((k) => typeof b[k] === 'string' && b[k].length <= 4000)
+  if (!b || !['th', 'en', 'fr'].every((k) => typeof b[k] === 'string' && b[k].length <= 4000)) return false
+  // Japanese is optional per paragraph
+  return b.ja === undefined || b.ja === null || (typeof b.ja === 'string' && b.ja.length <= 4000)
 }
 
 eulogyAdminRouter.post('/paragraphs', (req, res) => {
   if (!validTexts(req.body)) return res.status(400).json({ error: 'bad_paragraph' })
   const max = db.prepare(`SELECT COALESCE(MAX(position), 0) AS m FROM eulogy_paragraphs`).get().m
   const id = crypto.randomUUID()
-  db.prepare(`INSERT INTO eulogy_paragraphs (id, position, th, en, fr) VALUES (?, ?, ?, ?, ?)`).run(
+  db.prepare(`INSERT INTO eulogy_paragraphs (id, position, th, en, fr, ja) VALUES (?, ?, ?, ?, ?, ?)`).run(
     id,
     max + 1,
     req.body.th.trim(),
     req.body.en.trim(),
     req.body.fr.trim(),
+    typeof req.body.ja === 'string' && req.body.ja.trim() ? req.body.ja.trim() : null,
   )
   res.json({ ok: true, id })
 })
@@ -200,8 +203,14 @@ eulogyAdminRouter.post('/paragraphs', (req, res) => {
 eulogyAdminRouter.put('/paragraphs/:id', (req, res) => {
   if (!validTexts(req.body)) return res.status(400).json({ error: 'bad_paragraph' })
   const info = db
-    .prepare(`UPDATE eulogy_paragraphs SET th = ?, en = ?, fr = ? WHERE id = ?`)
-    .run(req.body.th.trim(), req.body.en.trim(), req.body.fr.trim(), req.params.id)
+    .prepare(`UPDATE eulogy_paragraphs SET th = ?, en = ?, fr = ?, ja = ? WHERE id = ?`)
+    .run(
+      req.body.th.trim(),
+      req.body.en.trim(),
+      req.body.fr.trim(),
+      typeof req.body.ja === 'string' && req.body.ja.trim() ? req.body.ja.trim() : null,
+      req.params.id,
+    )
   if (info.changes === 0) return res.status(404).json({ error: 'not_found' })
   res.json({ ok: true })
 })
