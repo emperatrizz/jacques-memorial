@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ComponentProps, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import LangSwitcher from './LangSwitcher'
 import Footer from './Footer'
@@ -9,15 +9,17 @@ import { ui } from '../ui'
 export default function PageShell({
   title,
   children,
+  langExtra,
 }: {
   title: Partial<L10n>
   children: ReactNode
+  langExtra?: ComponentProps<typeof LangSwitcher>['extra']
 }) {
   const { lang } = useLang()
   return (
     <div className="app">
       <div className="lang-bar">
-        <LangSwitcher />
+        <LangSwitcher extra={langExtra} />
       </div>
       <header className="page-header">
         <Link to="/" className="back-link" aria-label={pick(ui.back, lang)}>

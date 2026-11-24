@@ -32,6 +32,7 @@ export default function EulogyReader({
   connected,
   ended,
   archived,
+  readingLang: controlledLang,
 }: {
   paragraphs: EulogyParagraph[]
   liveIndex: number
@@ -39,11 +40,14 @@ export default function EulogyReader({
   connected: boolean
   ended?: boolean
   archived?: boolean
+  /** When the page hosts the language choice (the public eulogy page puts it
+   *  in the top bar), it passes the choice down and the reader shows no chips. */
+  readingLang?: ReadingLang
 }) {
   const { lang } = useLang()
   // The language the eulogy TEXT is read in — follows the site language until
   // the visitor picks one here (Japanese exists only for the eulogy).
-  const [readingLang, setReadingLang] = useState<ReadingLang>(() => {
+  const [ownLang, setOwnLang] = useState<ReadingLang>(() => {
     try {
       const saved = localStorage.getItem('eulogy-lang')
       if (saved === 'th' || saved === 'en' || saved === 'fr' || saved === 'ja') return saved
@@ -52,13 +56,16 @@ export default function EulogyReader({
     }
     return lang
   })
+  const readingLang = controlledLang ?? ownLang
+  const setReadingLang = setOwnLang
   useEffect(() => {
+    if (controlledLang) return
     try {
       localStorage.setItem('eulogy-lang', readingLang)
     } catch {
       /* ignore */
     }
-  }, [readingLang])
+  }, [readingLang, controlledLang])
   const [scale, setScale] = useState(() => {
     try {
       const s = parseFloat(localStorage.getItem('eulogy-scale') || '1')
@@ -131,17 +138,19 @@ export default function EulogyReader({
 
   return (
     <div className="eulogy-reader">
-      <div className="reading-langs" role="group" aria-label="Eulogy language">
-        {READING_LANGS.map((l) => (
-          <button
-            key={l.code}
-            className={`lang-btn ${readingLang === l.code ? 'active' : ''}`}
-            onClick={() => setReadingLang(l.code)}
-          >
-            {l.label}
-          </button>
-        ))}
-      </div>
+      {!controlledLang && (
+        <div className="reading-langs" role="group" aria-label="Eulogy language">
+          {READING_LANGS.map((l) => (
+            <button
+              key={l.code}
+              className={`lang-btn ${readingLang === l.code ? 'active' : ''}`}
+              onClick={() => setReadingLang(l.code)}
+            >
+              {l.label}
+            </button>
+          ))}
+        </div>
+      )}
       {archived && (
         <p className="eulogy-dateline" lang={readingLang}>
           {DATELINE[readingLang]}
