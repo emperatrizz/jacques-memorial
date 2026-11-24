@@ -13,6 +13,13 @@ const READING_LANGS: { code: ReadingLang; label: string }[] = [
   { code: 'ja', label: '日本語' },
 ]
 
+const DATELINE: Record<ReadingLang, string> = {
+  th: 'อ่านโดยลูกสาวของท่านในพิธี ณ วัดปริวาส วันที่ 22 พฤศจิกายน พ.ศ. 2569',
+  en: 'Read by his daughter at the ceremony — Wat Pariwat Temple, 22 November 2026',
+  fr: 'Lu par sa fille lors de la cérémonie — temple Wat Pariwat, le 22 novembre 2026',
+  ja: '2026年11月22日、ワット・パリワット寺院での儀式にて、娘により朗読されました',
+}
+
 /**
  * Shared reading view: large text, A−/A+ controls, live-paragraph highlight,
  * free scrolling with a "Return to live" control. Used by the public /eulogy
@@ -24,12 +31,14 @@ export default function EulogyReader({
   active,
   connected,
   ended,
+  archived,
 }: {
   paragraphs: EulogyParagraph[]
   liveIndex: number
   active: boolean
   connected: boolean
   ended?: boolean
+  archived?: boolean
 }) {
   const { lang } = useLang()
   // The language the eulogy TEXT is read in — follows the site language until
@@ -133,14 +142,19 @@ export default function EulogyReader({
           </button>
         ))}
       </div>
+      {archived && (
+        <p className="eulogy-dateline" lang={readingLang}>
+          {DATELINE[readingLang]}
+        </p>
+      )}
       <div className="reader-toolbar">
         <span className="reader-status">
-          {!connected && <span className="reconnect-note">{pick(ui.reconnecting, lang)}</span>}
-          {connected && active && <span className="live-chip">● {pick(ui.eulogyLiveNow, lang)}</span>}
-          {connected && !active && !ended && (
+          {!archived && !connected && <span className="reconnect-note">{pick(ui.reconnecting, lang)}</span>}
+          {!archived && connected && active && <span className="live-chip">● {pick(ui.eulogyLiveNow, lang)}</span>}
+          {!archived && connected && !active && !ended && (
             <span className="section-note">{pick(ui.eulogyNotStarted, lang)}</span>
           )}
-          {connected && ended && <span className="section-note">{pick(ui.eulogyEnded, lang)}</span>}
+          {!archived && connected && ended && <span className="section-note">{pick(ui.eulogyEnded, lang)}</span>}
         </span>
         <span className="text-size-controls" role="group" aria-label="Text size">
           <button className="size-btn" onClick={() => setScale((s) => Math.max(0.85, +(s - 0.15).toFixed(2)))}>

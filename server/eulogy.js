@@ -19,7 +19,8 @@ function paragraphCount() {
 function settings() {
   const row = db.prepare(`SELECT json FROM content WHERE key = 'eulogy'`).get()
   const s = row ? JSON.parse(row.json) : {}
-  return { published: Boolean(s.published), revealAll: Boolean(s.revealAll) }
+  // archived: the ceremony is over — the page is a static memorial text
+  return { published: Boolean(s.published), revealAll: Boolean(s.revealAll), archived: Boolean(s.archived) }
 }
 
 function isPublished() {
@@ -37,7 +38,7 @@ function saveSettings(next) {
 function revealedCount() {
   const s = settings()
   if (!s.published) return 0
-  if (s.revealAll) return paragraphCount()
+  if (s.revealAll || s.archived) return paragraphCount()
   return getSession('live').max_index + 1
 }
 
@@ -136,19 +137,23 @@ export function setupEulogyWs(server) {
 export const eulogyPublicRouter = Router()
 
 eulogyPublicRouter.get('/', (req, res) => {
+  const { archived } = settings()
   const published = isPublished()
   const live = getSession('live')
   // Only revealed paragraphs ever leave the server — guests cannot read ahead.
   const revealed = revealedCount()
   res.json({
     published,
+    archived,
     revealed,
     paragraphs: published
       ? getParagraphs()
           .slice(0, revealed)
           .map(({ id, th, en, fr, ja }) => ({ id, th, en, fr, ja: ja || undefined }))
       : [],
-    live: { index: published ? live.current_index : -1, active: published && live.current_index >= 0 },
+    live: archived
+      ? { index: -1, active: false }
+      : { index: published ? live.current_index : -1, active: published && live.current_index >= 0 },
   })
 })
 
@@ -252,6 +257,14 @@ eulogyAdminRouter.post('/publish', (req, res) => {
 // After the ceremony: reveal the whole text to visitors at once.
 eulogyAdminRouter.post('/reveal', (req, res) => {
   saveSettings({ revealAll: Boolean(req.body?.revealAll) })
+  broadcast('live')
+  res.json({ ok: true, ...settings() })
+})
+
+// After the ceremony: turn the page into a static memorial text (full speech,
+// no live session shown). Reversible.
+eulogyAdminRouter.post('/archive', (req, res) => {
+  saveSettings({ archived: Boolean(req.body?.archived) })
   broadcast('live')
   res.json({ ok: true, ...settings() })
 })

@@ -8,6 +8,7 @@ import { ui } from '../ui'
 
 type EulogyData = {
   published: boolean
+  archived?: boolean
   paragraphs: EulogyParagraph[]
   live: { index: number; active: boolean }
 }
@@ -15,36 +16,13 @@ type EulogyData = {
 export default function Eulogy() {
   const { lang } = useLang()
   const [data, setData] = useState<EulogyData | null>(null)
-  const [liveIndex, setLiveIndex] = useState(-1)
-  const [active, setActive] = useState(false)
-  const [everActive, setEverActive] = useState(false)
-
-  const load = () =>
-    fetch('/api/eulogy')
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((d: EulogyData) => {
-        setData(d)
-        setLiveIndex(d.live.index)
-        setActive(d.live.active)
-        if (d.live.active) setEverActive(true)
-      })
-      .catch(() => setData({ published: false, paragraphs: [], live: { index: -1, active: false } }))
 
   useEffect(() => {
-    load()
+    fetch('/api/eulogy')
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then(setData)
+      .catch(() => setData({ published: false, paragraphs: [], live: { index: -1, active: false } }))
   }, [])
-
-  const connected = useEulogySocket('live', (s) => {
-    setLiveIndex(s.index)
-    setActive(s.active)
-    if (s.active) setEverActive(true)
-    // Fetch newly revealed paragraphs (progressive reveal), or react to publishing
-    setData((d) => {
-      if (d && s.published !== d.published) load()
-      else if (d && s.published && s.revealed !== d.paragraphs.length) load()
-      return d
-    })
-  })
 
   if (!data) {
     return (
@@ -64,6 +42,49 @@ export default function Eulogy() {
       </PageShell>
     )
   }
+
+  // After the ceremony: a quiet, static memorial page — the full speech with
+  // the dateline, no live connection, no live indicators.
+  if (data.archived) {
+    return (
+      <PageShell title={ui.eulogyTitle}>
+        <EulogyReader paragraphs={data.paragraphs} liveIndex={-1} active={false} connected archived />
+      </PageShell>
+    )
+  }
+
+  return <LiveEulogy initial={data} />
+}
+
+// The live-ceremony experience, mounted only while the page is not archived.
+function LiveEulogy({ initial }: { initial: EulogyData }) {
+  const [data, setData] = useState<EulogyData>(initial)
+  const [liveIndex, setLiveIndex] = useState(initial.live.index)
+  const [active, setActive] = useState(initial.live.active)
+  const [everActive, setEverActive] = useState(initial.live.active)
+
+  const load = () =>
+    fetch('/api/eulogy')
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((d: EulogyData) => {
+        setData(d)
+        setLiveIndex(d.live.index)
+        setActive(d.live.active)
+        if (d.live.active) setEverActive(true)
+      })
+      .catch(() => {})
+
+  const connected = useEulogySocket('live', (s) => {
+    setLiveIndex(s.index)
+    setActive(s.active)
+    if (s.active) setEverActive(true)
+    // Fetch newly revealed paragraphs (progressive reveal), or react to publishing
+    setData((d) => {
+      if (d && s.published !== d.published) load()
+      else if (d && s.published && s.revealed !== d.paragraphs.length) load()
+      return d
+    })
+  })
 
   return (
     <PageShell title={ui.eulogyTitle}>
